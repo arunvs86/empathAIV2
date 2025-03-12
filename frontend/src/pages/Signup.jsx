@@ -120,7 +120,7 @@ const Signup = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:5003/auth/register", {
+      const response = await fetch("https://empathaiv2-backend.onrender.com/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

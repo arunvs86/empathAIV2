@@ -29,7 +29,7 @@ function CreateCommunity({ onCommunityCreated }) {
     }
 
     try {
-      const response = await fetch("http://localhost:5003/communities", {
+      const response = await fetch("https://empathaiv2-backend.onrender.com/communities", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -27,7 +27,7 @@ class EmailService {
             { expiresIn: "1h" }
         );
 
-        const verificationLink = `http://localhost:5003/auth/verify-email?token=${token}`;
+        const verificationLink = `https://empathaiv2-backend.onrender.com/auth/verify-email?token=${token}`;
 
         const mailOptions = {
             from: process.env.EMAIL_FROM,
@@ -58,7 +58,7 @@ class EmailService {
             { expiresIn: process.env.RESET_PASSWORD_EXPIRY }
         );
         console.log(token)
-        const resetLink = `http://localhost:5003/auth/reset-password?token=${token}`;
+        const resetLink = `https://empathaiv2-backend.onrender.com/auth/reset-password?token=${token}`;
 
         const mailOptions = {
             from: process.env.EMAIL_FROM,

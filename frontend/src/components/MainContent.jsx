@@ -69,7 +69,7 @@ function MainContent() {
         }
 
         // Make GET request to /posts with Authorization header
-        const response = await fetch("http://localhost:5003/posts", {
+        const response = await fetch("https://empathaiv2-backend.onrender.com/posts", {
           headers: {
             Authorization: `Bearer ${token}`,
           },

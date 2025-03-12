@@ -62,7 +62,7 @@ class PostService{
       // 3. Fetch user details from your REST API endpoint
       if (userIds.length > 0) {
         const userResponse = await fetch(
-          `http://localhost:5003/users?ids=${userIds.join(",")}`
+          `https://empathaiv2-backend.onrender.com/users?ids=${userIds.join(",")}`
         );
         if (!userResponse.ok) {
           throw new Error("Failed to fetch user details");
@@ -133,7 +133,7 @@ class PostService{
       // 2. Fetch user details if we have any user IDs
       if (userIds.length > 0) {
         const userResponse = await fetch(
-          `http://localhost:5003/users?ids=${userIds.join(",")}`
+          `https://empathaiv2-backend.onrender.com/users?ids=${userIds.join(",")}`
         );
         if (!userResponse.ok) {
           throw new Error("Failed to fetch user details");
@@ -263,7 +263,7 @@ class PostService{
       
         // 3. Fetch user details via a REST API endpoint that returns [{ id, username, profile_picture }]
         const userResponse = await fetch(
-          `http://localhost:5003/users?ids=${userIds.join(",")}`
+          `https://empathaiv2-backend.onrender.com/users?ids=${userIds.join(",")}`
         );
         if (!userResponse.ok) {
           throw new Error("Failed to fetch user details");

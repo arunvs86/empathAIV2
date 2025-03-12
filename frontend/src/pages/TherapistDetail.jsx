@@ -83,7 +83,7 @@
 //         session_type: "video",
 //       };
   
-//       const response = await fetch("http://localhost:5003/appointments", {
+//       const response = await fetch("https://empathaiv2-backend.onrender.com/appointments", {
 //         method: "POST",
 //         headers: {
 //           "Content-Type": "application/json",
@@ -230,7 +230,7 @@ function TherapistDetail() {
         session_type: "video",
       };
 
-      const response = await fetch("http://localhost:5003/appointments", {
+      const response = await fetch("https://empathaiv2-backend.onrender.com/appointments", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

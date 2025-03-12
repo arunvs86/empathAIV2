@@ -9,7 +9,7 @@
 //   useEffect(() => {
 //     const fetchCommunities = async () => {
 //       try {
-//         const response = await fetch("http://localhost:5003/communities");
+//         const response = await fetch("https://empathaiv2-backend.onrender.com/communities");
 //         if (!response.ok) {
 //           const errorData = await response.json();
 //           throw new Error(errorData.error || "Failed to fetch communities");
@@ -69,7 +69,7 @@ function CommunityList({ onCreateCommunity, onSelectCommunity }) {
   useEffect(() => {
     const fetchCommunities = async () => {
       try {
-        const response = await fetch("http://localhost:5003/communities");
+        const response = await fetch("https://empathaiv2-backend.onrender.com/communities");
         if (!response.ok) {
           const errorData = await response.json();
           throw new Error(errorData.error || "Failed to fetch communities");

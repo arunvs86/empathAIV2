@@ -16,7 +16,7 @@ function CommunityDetail({ communityId, onBack }) {
     const fetchData = async () => {
       try {
         // 1) Fetch community
-        let response = await fetch(`http://localhost:5003/communities/${communityId}`);
+        let response = await fetch(`https://empathaiv2-backend.onrender.com/communities/${communityId}`);
         if (!response.ok) {
           const errData = await response.json();
           throw new Error(errData.error || "Failed to fetch community");
@@ -25,7 +25,7 @@ function CommunityDetail({ communityId, onBack }) {
 
         // 2) Fetch posts for this community
         //    If your endpoint is GET /api/posts?community_id=xxx or something else
-        response = await fetch(`http://localhost:5003/posts/community/${communityId}`);
+        response = await fetch(`https://empathaiv2-backend.onrender.com/posts/community/${communityId}`);
         if (!response.ok) {
           const errData = await response.json();
           throw new Error(errData.error || "Failed to fetch community posts");
@@ -57,7 +57,7 @@ function CommunityDetail({ communityId, onBack }) {
     }
 
     try {
-      const response = await fetch("http://localhost:5003/posts", {
+      const response = await fetch("https://empathaiv2-backend.onrender.com/posts", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
