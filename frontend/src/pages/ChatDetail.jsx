@@ -93,7 +93,7 @@ function ChatDetail() {
 
       // 2) If chatting with the bot, call the chatbot API and persist the bot's response
       if (otherParticipant && otherParticipant.id === botId) {
-        const botResponse = await fetch("http://localhost:8080/ask", {
+        const botResponse = await fetch("https://flask-app-275410178944.europe-west2.run.app/ask", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
