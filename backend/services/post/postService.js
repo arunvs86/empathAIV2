@@ -43,8 +43,38 @@ class PostService{
       // --- New Classification Logic ---
       // Define the candidate labels to be used for classification.
       // Adjust these labels as necessary for your application.
-      const candidateLabels = ["grief support", "anxiety", "depression", "offense", "motivation", "abuse"];
-      
+      const candidateLabels = [
+        "Grief",
+        "Bereavement",
+        "Loss",
+        "Anxiety",
+        "Depression",
+        "Coping Strategies",
+        "Self-Care",
+        "Emotional Healing",
+        "Resilience",
+        "Stress Management",
+        "Mindfulness",
+        "Acceptance",
+        "Recovery",
+        "Social Support",
+        "Therapy & Counseling",
+        "Offensive Language",
+        "Harassment",
+        "Hate Speech",
+        "Bullying",
+        "Abuse",
+        "Discrimination",
+        "Toxicity",
+        "Profanity",
+        "Inflammatory Content",
+        "Inciting Violence",
+        "Racism",
+        "Sexual Harassment",
+        "Misogyny",
+        "Extremism",
+        "Insults"
+      ];      
       try {
           // Call your classification API endpoint.
           const response = await fetch('https://flask-app-275410178944.europe-west2.run.app/classify', {  
