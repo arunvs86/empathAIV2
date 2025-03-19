@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
+
 function ChatCard({ chat, currentUserId }) {
   const navigate = useNavigate();
 
@@ -18,7 +19,7 @@ function ChatCard({ chat, currentUserId }) {
       <div className="flex items-center space-x-3">
         {/* Avatar for the other participant */}
         <img
-          src={otherParticipant.profile_picture || "/src/assets/avatar.png"}
+          src={otherParticipant.profile_picture || "/assets/avatar.png"}
           alt="Avatar"
           className="w-10 h-10 rounded-full object-cover"
         />

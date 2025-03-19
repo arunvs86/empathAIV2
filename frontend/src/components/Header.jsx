@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 function Header() {
   const navigate = useNavigate();
   const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
-  const avatarUrl = currentUser.profile_picture || "/src/assets/avatar.png";
+  const avatarUrl = currentUser.profile_picture || "/assets/avatar.png";
   const username = currentUser.username || "User";
 
   const handleLogout = () => {

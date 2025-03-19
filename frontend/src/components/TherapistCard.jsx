@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 function TherapistCard({ therapist }) {
   const navigate = useNavigate();
   const username = therapist.User?.username || "Therapist";
-  const avatar = therapist.User?.profile_picture || "src/assets/avatar.png";
+  const avatar = therapist.User?.profile_picture || "/assets/avatar.png";
 
   return (
     <div className="bg-white border border-gray-200 rounded-md p-4 shadow-sm hover:shadow-md transition-shadow">

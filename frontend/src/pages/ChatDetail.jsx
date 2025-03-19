@@ -130,7 +130,7 @@ function ChatDetail() {
     const bubbleAlign = isCurrentUser ? "justify-end" : "justify-start";
     const bubbleBg = isCurrentUser ? "bg-emerald-100" : "bg-gray-100";
     const textAlign = isCurrentUser ? "text-right" : "text-left";
-    const avatarUrl = "/src/assets/avatar.png"; // Placeholder avatar
+    const avatarUrl = "/assets/avatar.png"; // Placeholder avatar
 
     return (
       <div key={idx} className={`flex w-full mb-2 ${bubbleAlign}`}>

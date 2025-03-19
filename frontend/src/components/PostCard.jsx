@@ -21,7 +21,7 @@ function PostCard({ post, onPostUpdated, onPostDeleted }) {
   const createdAt = post.createdAt ? new Date(post.createdAt).toLocaleString() : "";
   const lastEdited = post.lastEditedAt ? new Date(post.lastEditedAt).toLocaleString() : null;
   const displayName = post.anonymous ? "Anonymous" : post.username;
-  const avatarUrl = post.profile_picture || "src/assets/avatar.png";
+  const avatarUrl = post.profile_picture || "/assets/avatar.png";
   const communityName = post.communityId?.name || null;
 
   const navigate = useNavigate(); // For messaging
@@ -371,7 +371,7 @@ function PostCard({ post, onPostUpdated, onPostDeleted }) {
               {comments.map((comment) => (
                 <div key={comment._id} className="flex items-start space-x-3">
                   <img
-                    src={comment.profile_picture || "src/assets/avatar.png"}
+                    src={comment.profile_picture || "/assets/avatar.png"}
                     alt="Comment Avatar"
                     className="w-6 h-6 rounded-full object-cover"
                   />
