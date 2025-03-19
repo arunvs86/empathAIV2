@@ -9,5 +9,6 @@ router.post("/:id/decision", authMiddleware, appointmentController.handleAppoint
 router.post("/:id/cancel", authMiddleware, appointmentController.cancelAppointment);
 router.post("/:id/reschedule", authMiddleware, appointmentController.requestReschedule);
 router.post("/:id/reschedule-decision", authMiddleware, appointmentController.handleRescheduleDecision);
+router.get("/therapist/:id", authMiddleware, appointmentController.getTherapistAppointments);
 
 export default router;

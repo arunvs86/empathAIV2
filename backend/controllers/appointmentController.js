@@ -63,6 +63,23 @@ class AppointmentController {
             res.status(400).json({ error: error.message });
         }
     }
+
+    async getTherapistAppointments(req, res) {
+        try {
+          // The therapist's ID is passed as a URL parameter.
+          const therapistId = req.params.id;
+          
+          // Call the service to fetch all appointments for this therapist.
+          const appointments = await appointmentService.getAppointmentsByTherapist(therapistId);
+          
+          // Return the appointments as JSON.
+          res.status(200).json(appointments);
+        } catch (error) {
+          console.error("Error in getTherapistAppointments:", error);
+          res.status(400).json({ error: error.message });
+        }
+      }
+      
 }
 
 export default new AppointmentController();

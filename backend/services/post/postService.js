@@ -4,28 +4,92 @@ import UserViolations from "../../models/UserViolations.js"
 
 class PostService{
 
-    async createPost(userId,postData){
+    // async createPost(userId,postData){
         
-        const {content,media,categories,community_id} = postData
-        if(community_id){
-            const community = await Community.findById(community_id)
-            if(!community) throw new Error("The community could not be found")
+    //     const {content,media,categories,community_id} = postData
+    //     if(community_id){
+    //         const community = await Community.findById(community_id)
+    //         if(!community) throw new Error("The community could not be found")
                 
-            if(community.type === "private" && !community.members.includes(userId)){
-                throw new Error("You are not part of this community. Please click join and post once approved")
-            }
-        }
+    //         if(community.type === "private" && !community.members.includes(userId)){
+    //             throw new Error("You are not part of this community. Please click join and post once approved")
+    //         }
+    //     }
 
-        const newPost = await Post.create({
-            userId,
-            content,
-            media,
-            categories,
-            communityId : community_id || null
-        });
+    //     const newPost = await Post.create({
+    //         userId,
+    //         content,
+    //         media,
+    //         categories,
+    //         communityId : community_id || null
+    //     });
 
-        return newPost;
-    }
+    //     return newPost;
+    // }
+
+    async createPost(userId, postData) {
+      const { content, media, categories, community_id } = postData;
+      
+      // Validate community membership if community_id is provided
+      if (community_id) {
+          const community = await Community.findById(community_id);
+          if (!community) throw new Error("The community could not be found");
+                  
+          if (community.type === "private" && !community.members.includes(userId)) {
+              throw new Error("You are not part of this community. Please click join and post once approved");
+          }
+      }
+  
+      // --- New Classification Logic ---
+      // Define the candidate labels to be used for classification.
+      // Adjust these labels as necessary for your application.
+      const candidateLabels = ["grief support", "anxiety", "depression", "offense", "motivation", "abuse"];
+      
+      try {
+          // Call your classification API endpoint.
+          const response = await fetch('https://flask-app-275410178944.europe-west2.run.app/classify', {  
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                  user_post: content,
+                  candidate_labels: candidateLabels
+              })
+          });
+          
+          // Parse the API response
+          const result = await response.json();
+          
+          // Sort topics by score (highest first) and take the top 2 labels
+          let topTwoCategories = [];
+          if (result.topics && result.topics.length > 0) {
+              result.topics.sort((a, b) => b.score - a.score);
+              topTwoCategories = result.topics.slice(0, 2).map(topic => topic.label);
+          }
+          
+          // Optionally log the result for debugging:
+          console.log("Top two categories:", topTwoCategories);
+          
+          // --- End New Classification Logic ---
+          
+          // Create the new post with the top two categories from the classification API.
+          const newPost = await Post.create({
+              userId,
+              content,
+              media,
+              categories: topTwoCategories, // Use the classified top two categories
+              communityId: community_id || null
+          });
+          
+          return newPost;
+      } catch (error) {
+          // Handle errors from the classification API call if needed
+          console.error("Error during classification:", error);
+          throw new Error("Post creation failed due to classification error.");
+      }
+  }
+  
     
     async getAllPosts(filters = {}, pagination = { limit: 15, page: 1 }) {
       const { limit, page } = pagination;

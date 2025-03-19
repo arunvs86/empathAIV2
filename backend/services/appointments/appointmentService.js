@@ -149,6 +149,16 @@ class AppointmentService {
         await appointment.save();
         return { message: `Reschedule request ${decision}ed successfully!` };
     }
+
+    async getAppointmentsByTherapist(therapistId) {
+        // Find all appointments where the therapist_id matches the provided therapistId.
+        // We order them by created_at in descending order (newest first).
+        const appointments = await Appointments.findAll({
+          where: { therapist_id: therapistId },
+          order: [["created_at", "DESC"]],
+        });
+        return appointments;
+      }
 }
 
 export default new AppointmentService();

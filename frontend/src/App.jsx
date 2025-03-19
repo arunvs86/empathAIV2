@@ -13,6 +13,8 @@ import MainContent from "./components/MainContent";
 import CreatePost from "./components/CreatePost";
 import CommunityView from "./components/CommunityView";
 import CommunityDetail from "./components/CommunityDetail";
+import TherapistAppointments from "./pages/TherapistAppointment";
+import TherapistAvailabilityForm from "./pages/TherapistAvailabilityForm";
 
 function App() {
   return (
@@ -29,7 +31,9 @@ function App() {
           {/* <Route path="messages" element={<Messages />} /> */}
           {/* Add other routes as needed */}
           
-          <Route path="/therapists" element={<Therapists />} />
+        <Route path="/therapists" element={<Therapists />} />
+        <Route path="/therapist/appointments" element={<TherapistAppointments />} />
+        <Route path="/therapist/availability" element={<TherapistAvailabilityForm />} />
         <Route path="/therapists/:id" element={<TherapistDetail />} />
         <Route path="/chats" element={<ChatList />} />
         <Route path="/chats/:chatId" element={<ChatDetail />} />
