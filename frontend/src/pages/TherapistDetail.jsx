@@ -19,6 +19,7 @@ function TherapistDetail() {
 
         // 2) Fetch availability
         const availData = await fetchTherapistAvailability(id);
+        console.log(availData)
         setAvailability(availData);
       } catch (err) {
         setError(err.message);
