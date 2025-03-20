@@ -54,7 +54,7 @@ class TherapistAvailabilityService {
       const slotEnd = t + 60;
       // Only add the slot if the full hour fits within the range
       if (slotEnd <= endMinutes) {
-        slots.push(`${formatTime(slotStart)}-${formatTime(slotEnd)}`);
+        slots.push(`${this.formatTime(slotStart)}-${this.formatTime(slotEnd)}`);
       }
     }
     return slots;
@@ -82,7 +82,7 @@ class TherapistAvailabilityService {
     for (const slot of availabilityData.selected_time_slots[date]) {
       // If the slot contains a range indicator, split it
       if (slot.includes("-")) {
-        const oneHourSlots = splitTimeRange(slot);
+        const oneHourSlots = this.splitTimeRange(slot);
         processedTimeSlots[date].push(...oneHourSlots);
       } else {
         // Otherwise, just keep the slot as-is
