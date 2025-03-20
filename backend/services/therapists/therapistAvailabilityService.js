@@ -115,113 +115,120 @@ class TherapistAvailabilityService {
   //   return { message: "Availability updated successfully!" };
   // }
 
-  async splitTimeRange(timeRange) {
-    try {
-      // Remove extra spaces and any 'am/pm' (assuming a 24-hour format for simplicity)
-      const cleanRange = timeRange.trim().replace(/\s*(am|pm)/gi, "");
-      const rangeParts = cleanRange.split("-");
-      if (rangeParts.length !== 2) {
-        console.error("Time range not in expected format:", timeRange);
-        return [];
-      }
-      const [startStr, endStr] = rangeParts;
-      const startParts = startStr.split(":").map(Number);
-      const endParts = endStr.split(":").map(Number);
-      if (
-        startParts.length !== 2 ||
-        endParts.length !== 2 ||
-        isNaN(startParts[0]) ||
-        isNaN(startParts[1]) ||
-        isNaN(endParts[0]) ||
-        isNaN(endParts[1])
-      ) {
-        console.error("Invalid time provided:", timeRange);
-        return [];
-      }
-      
-      const [startHour, startMinute] = startParts;
-      const [endHour, endMinute] = endParts;
-      
-      // Convert times to total minutes
-      const startMinutes = startHour * 60 + startMinute;
-      const endMinutes = endHour * 60 + endMinute;
-      
-      const slots = [];
-      // Generate one-hour slots
-      for (let t = startMinutes; t < endMinutes; t += 60) {
-        const slotStart = t;
-        const slotEnd = t + 60;
-        // Only add the slot if the full hour fits in the range
-        if (slotEnd <= endMinutes) {
-          slots.push(`${this.formatTime(slotStart)}-${this.formatTime(slotEnd)}`);
-        }
-      }
-      return slots;
-    } catch (error) {
-      console.error("Error in splitTimeRange:", error);
+async splitTimeRange(timeRange) {
+  console.log("splitTimeRange input:", timeRange);
+  try {
+    // Remove extra spaces and any 'am/pm' (assuming a 24-hour format for simplicity)
+    const cleanRange = timeRange.trim().replace(/\s*(am|pm)/gi, "");
+    console.log("cleanRange:", cleanRange);
+    
+    // Split by hyphen; note that if you are using an en dash or em dash, the split will fail.
+    const rangeParts = cleanRange.split("-");
+    if (rangeParts.length !== 2) {
+      console.error("Time range not in expected format:", timeRange);
       return [];
     }
-  }
-  
- 
-  async formatTime(totalMinutes) {
-    const hour = Math.floor(totalMinutes / 60);
-    const minute = totalMinutes % 60;
-    return `${hour.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")}`;
-  }
-  
-
-  async setAvailability(therapistId, availabilityData) {
-    let availability = await TherapistAvailability.findOne({ where: { therapist_id: therapistId } });
-  
-    const therapist = await Therapist.findOne({ where: { user_id: therapistId } });
-    if (!therapist) {
-      throw new Error("Therapist does not exist. Ensure the account is verified. ID: " + therapistId);
+    
+    // Trim each part to remove accidental spaces.
+    const [startStr, endStr] = rangeParts.map(str => str.trim());
+    const startParts = startStr.split(":").map(Number);
+    const endParts = endStr.split(":").map(Number);
+    
+    if (
+      startParts.length !== 2 ||
+      endParts.length !== 2 ||
+      isNaN(startParts[0]) ||
+      isNaN(startParts[1]) ||
+      isNaN(endParts[0]) ||
+      isNaN(endParts[1])
+    ) {
+      console.error("Invalid time provided:", timeRange);
+      return [];
     }
-  
-    // Process selected_time_slots: split any range into one-hour slots.
-    const processedTimeSlots = {};
-    // Assuming availabilityData.selected_time_slots is an object mapping dates to arrays of slot strings
-    for (const date in availabilityData.selected_time_slots) {
-      processedTimeSlots[date] = [];
-      for (const slot of availabilityData.selected_time_slots[date]) {
-        if (slot.includes("-")) {
-          // Call the helper function to split the range
-          let oneHourSlots = this.splitTimeRange(slot);
-          // Defensive check: if not an array, fall back to an empty array
-          if (!Array.isArray(oneHourSlots)) {
-            console.error("splitTimeRange did not return an array for slot:", slot);
-            oneHourSlots = [];
-          }
-          processedTimeSlots[date].push(...oneHourSlots);
-        } else {
-          processedTimeSlots[date].push(slot);
-        }
+    
+    const [startHour, startMinute] = startParts;
+    const [endHour, endMinute] = endParts;
+    
+    // Convert times to total minutes
+    const startMinutes = startHour * 60 + startMinute;
+    const endMinutes = endHour * 60 + endMinute;
+    
+    const slots = [];
+    // Generate one-hour slots
+    for (let t = startMinutes; t < endMinutes; t += 60) {
+      const slotStart = t;
+      const slotEnd = t + 60;
+      // Only add the slot if the full hour fits in the range
+      if (slotEnd <= endMinutes) {
+        slots.push(`${this.formatTime(slotStart)}-${this.formatTime(slotEnd)}`);
       }
     }
-  
-    // Create a new record if none exists, otherwise update the existing one.
-    if (!availability) {
-      availability = await TherapistAvailability.create({
-        therapist_id: therapist.id,
-        selected_dates: availabilityData.selected_dates || [],
-        selected_time_slots: processedTimeSlots,
-        availability_type: availabilityData.availability_type || "manual",
-        ai_input_text: availabilityData.ai_input_text || null,
-        ai_processed_slots: availabilityData.ai_processed_slots || {}
-      });
-    } else {
-      await availability.update({
-        selected_dates: availabilityData.selected_dates || [],
-        selected_time_slots: processedTimeSlots,
-        availability_type: availabilityData.availability_type || "manual",
-        ai_input_text: availabilityData.ai_input_text || null,
-        ai_processed_slots: availabilityData.ai_processed_slots || {}
-      });
-    }
-  
-    return { message: "Availability updated successfully!" };
+    console.log("Generated slots:", slots);
+    return slots;
+  } catch (error) {
+    console.error("Error in splitTimeRange:", error);
+    return [];
   }
+}
+
+async formatTime(totalMinutes) {
+  const hour = Math.floor(totalMinutes / 60);
+  const minute = totalMinutes % 60;
+  return `${hour.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")}`;
+}
+
+
+async setAvailability(therapistId, availabilityData) {
+  let availability = await TherapistAvailability.findOne({ where: { therapist_id: therapistId } });
+
+  const therapist = await Therapist.findOne({ where: { user_id: therapistId } });
+  if (!therapist) {
+    throw new Error("Therapist does not exist. Ensure the account is verified. ID: " + therapistId);
+  }
+
+  // Process selected_time_slots: split any range into one-hour slots.
+  const processedTimeSlots = {};
+  // Assuming availabilityData.selected_time_slots is an object mapping dates to arrays of slot strings.
+  for (const date in availabilityData.selected_time_slots) {
+    processedTimeSlots[date] = [];
+    for (const slot of availabilityData.selected_time_slots[date]) {
+      if (slot.includes("-")) {
+        // Call the helper function to split the range.
+        let oneHourSlots = this.splitTimeRange(slot);
+        if (!Array.isArray(oneHourSlots)) {
+          console.error("splitTimeRange did not return an array for slot:", slot);
+          oneHourSlots = [];
+        }
+        processedTimeSlots[date].push(...oneHourSlots);
+      } else {
+        processedTimeSlots[date].push(slot);
+      }
+    }
+  }
+
+  // Create a new record if none exists, otherwise update the existing one.
+  if (!availability) {
+    availability = await TherapistAvailability.create({
+      therapist_id: therapist.id,
+      selected_dates: availabilityData.selected_dates || [],
+      selected_time_slots: processedTimeSlots,
+      availability_type: availabilityData.availability_type || "manual",
+      ai_input_text: availabilityData.ai_input_text || null,
+      ai_processed_slots: availabilityData.ai_processed_slots || {}
+    });
+  } else {
+    await availability.update({
+      selected_dates: availabilityData.selected_dates || [],
+      selected_time_slots: processedTimeSlots,
+      availability_type: availabilityData.availability_type || "manual",
+      ai_input_text: availabilityData.ai_input_text || null,
+      ai_processed_slots: availabilityData.ai_processed_slots || {}
+    });
+  }
+
+  return { message: "Availability updated successfully!" };
+}
+
 
   /**
    * Fetch Therapist Availability by therapist_id
