@@ -234,7 +234,7 @@ async setAvailability(therapistId, availabilityData) {
    * Fetch Therapist Availability by therapist_id
    */
   async getAvailability(therapistId) {
-    const availability = await TherapistAvailability.findOne({ where: { therapist_id: therapistId } });
+    const availability = await TherapistAvailability.findAll({ where: { therapist_id: therapistId } });
     if (!availability) throw new Error("No availability set for this therapist.");
     return availability;
   }
