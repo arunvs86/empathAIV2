@@ -116,56 +116,61 @@ class TherapistAvailabilityService {
   // }
 
   async splitTimeRange(timeRange) {
-    // Remove extra spaces and any 'am/pm' (assuming a 24-hour format for simplicity)
-    const cleanRange = timeRange.trim().replace(/\s*(am|pm)/gi, "");
-    const rangeParts = cleanRange.split("-");
-    if (rangeParts.length !== 2) {
-      console.error("Time range not in expected format:", timeRange);
-      return [];
-    }
-    const [startStr, endStr] = rangeParts;
-    const startParts = startStr.split(":").map(Number);
-    const endParts = endStr.split(":").map(Number);
-    if (
-      startParts.length !== 2 ||
-      endParts.length !== 2 ||
-      isNaN(startParts[0]) ||
-      isNaN(startParts[1]) ||
-      isNaN(endParts[0]) ||
-      isNaN(endParts[1])
-    ) {
-      console.error("Invalid time provided:", timeRange);
-      return [];
-    }
-    
-    const [startHour, startMinute] = startParts;
-    const [endHour, endMinute] = endParts;
-    
-    // Convert times to total minutes
-    const startMinutes = startHour * 60 + startMinute;
-    const endMinutes = endHour * 60 + endMinute;
-    
-    const slots = [];
-    // Generate one-hour slots
-    for (let t = startMinutes; t < endMinutes; t += 60) {
-      const slotStart = t;
-      const slotEnd = t + 60;
-      // Only add the slot if the full hour fits in the range
-      if (slotEnd <= endMinutes) {
-        slots.push(`${this.formatTime(slotStart)}-${this.formatTime(slotEnd)}`);
+    try {
+      // Remove extra spaces and any 'am/pm' (assuming a 24-hour format for simplicity)
+      const cleanRange = timeRange.trim().replace(/\s*(am|pm)/gi, "");
+      const rangeParts = cleanRange.split("-");
+      if (rangeParts.length !== 2) {
+        console.error("Time range not in expected format:", timeRange);
+        return [];
       }
+      const [startStr, endStr] = rangeParts;
+      const startParts = startStr.split(":").map(Number);
+      const endParts = endStr.split(":").map(Number);
+      if (
+        startParts.length !== 2 ||
+        endParts.length !== 2 ||
+        isNaN(startParts[0]) ||
+        isNaN(startParts[1]) ||
+        isNaN(endParts[0]) ||
+        isNaN(endParts[1])
+      ) {
+        console.error("Invalid time provided:", timeRange);
+        return [];
+      }
+      
+      const [startHour, startMinute] = startParts;
+      const [endHour, endMinute] = endParts;
+      
+      // Convert times to total minutes
+      const startMinutes = startHour * 60 + startMinute;
+      const endMinutes = endHour * 60 + endMinute;
+      
+      const slots = [];
+      // Generate one-hour slots
+      for (let t = startMinutes; t < endMinutes; t += 60) {
+        const slotStart = t;
+        const slotEnd = t + 60;
+        // Only add the slot if the full hour fits in the range
+        if (slotEnd <= endMinutes) {
+          slots.push(`${this.formatTime(slotStart)}-${this.formatTime(slotEnd)}`);
+        }
+      }
+      return slots;
+    } catch (error) {
+      console.error("Error in splitTimeRange:", error);
+      return [];
     }
-    return slots;
   }
   
-  
+ 
   async formatTime(totalMinutes) {
     const hour = Math.floor(totalMinutes / 60);
     const minute = totalMinutes % 60;
     return `${hour.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")}`;
   }
   
-   
+
   async setAvailability(therapistId, availabilityData) {
     let availability = await TherapistAvailability.findOne({ where: { therapist_id: therapistId } });
   
@@ -180,16 +185,16 @@ class TherapistAvailabilityService {
     for (const date in availabilityData.selected_time_slots) {
       processedTimeSlots[date] = [];
       for (const slot of availabilityData.selected_time_slots[date]) {
-        // If the slot contains a range indicator, process it
         if (slot.includes("-")) {
-          const oneHourSlots = this.splitTimeRange(slot);
-          if (Array.isArray(oneHourSlots)) {
-            processedTimeSlots[date].push(...oneHourSlots);
-          } else {
+          // Call the helper function to split the range
+          let oneHourSlots = this.splitTimeRange(slot);
+          // Defensive check: if not an array, fall back to an empty array
+          if (!Array.isArray(oneHourSlots)) {
             console.error("splitTimeRange did not return an array for slot:", slot);
+            oneHourSlots = [];
           }
+          processedTimeSlots[date].push(...oneHourSlots);
         } else {
-          // Otherwise, add the slot as provided
           processedTimeSlots[date].push(slot);
         }
       }
