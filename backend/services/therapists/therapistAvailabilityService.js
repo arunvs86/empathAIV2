@@ -115,7 +115,7 @@ class TherapistAvailabilityService {
   //   return { message: "Availability updated successfully!" };
   // }
 
-async splitTimeRange(timeRange) {
+splitTimeRange(timeRange) {
   console.log("splitTimeRange input:", timeRange);
   try {
     // Remove extra spaces and any 'am/pm' (assuming a 24-hour format for simplicity)
@@ -171,7 +171,7 @@ async splitTimeRange(timeRange) {
   }
 }
 
-async formatTime(totalMinutes) {
+formatTime(totalMinutes) {
   const hour = Math.floor(totalMinutes / 60);
   const minute = totalMinutes % 60;
   return `${hour.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")}`;
