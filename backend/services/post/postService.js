@@ -4,32 +4,9 @@ import UserViolations from "../../models/UserViolations.js"
 
 class PostService{
 
-    // async createPost(userId,postData){
-        
-    //     const {content,media,categories,community_id} = postData
-    //     if(community_id){
-    //         const community = await Community.findById(community_id)
-    //         if(!community) throw new Error("The community could not be found")
-                
-    //         if(community.type === "private" && !community.members.includes(userId)){
-    //             throw new Error("You are not part of this community. Please click join and post once approved")
-    //         }
-    //     }
-
-    //     const newPost = await Post.create({
-    //         userId,
-    //         content,
-    //         media,
-    //         categories,
-    //         communityId : community_id || null
-    //     });
-
-    //     return newPost;
-    // }
-
     async createPost(userId, postData) {
       const { content, media, categories, community_id } = postData;
-      
+      console.log(postData)
       // Validate community membership if community_id is provided
       if (community_id) {
           const community = await Community.findById(community_id);
@@ -58,38 +35,38 @@ class PostService{
        
       try {
           // Call your classification API endpoint.
-          const response = await fetch('https://flask-app-275410178944.europe-west2.run.app/classify', {  
-              method: 'POST',
-              headers: {
-                  'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({
-                  user_post: content,
-                  candidate_labels: candidateLabels
-              })
-          });
+          // const response = await fetch('https://flask-app-275410178944.europe-west2.run.app/classify', {  
+          //     method: 'POST',
+          //     headers: {
+          //         'Content-Type': 'application/json'
+          //     },
+          //     body: JSON.stringify({
+          //         user_post: content,
+          //         candidate_labels: candidateLabels
+          //     })
+          // });
           
-          // Parse the API response
-          const result = await response.json();
+          // // Parse the API response
+          // const result = await response.json();
           
-          // Sort topics by score (highest first) and take the top 2 labels
-          let topTwoCategories = [];
-          if (result.topics && result.topics.length > 0) {
-              result.topics.sort((a, b) => b.score - a.score);
-              topTwoCategories = result.topics.slice(0, 2).map(topic => topic.label);
-          }
+          // // Sort topics by score (highest first) and take the top 2 labels
+          // let topTwoCategories = [];
+          // if (result.topics && result.topics.length > 0) {
+          //     result.topics.sort((a, b) => b.score - a.score);
+          //     topTwoCategories = result.topics.slice(0, 2).map(topic => topic.label);
+          // }
           
-          // Optionally log the result for debugging:
-          console.log("Top two categories:", topTwoCategories);
+          // // Optionally log the result for debugging:
+          // console.log("Top two categories:", topTwoCategories);
           
-          // --- End New Classification Logic ---
+          // // --- End New Classification Logic ---
           
           // Create the new post with the top two categories from the classification API.
           const newPost = await Post.create({
               userId,
               content,
               media,
-              categories: topTwoCategories, // Use the classified top two categories
+              categories, // Use the classified top two categories
               communityId: community_id || null
           });
           
@@ -104,7 +81,6 @@ class PostService{
     
     async getAllPosts(filters = {}, pagination = { limit: 15, page: 1 }) {
       const { limit, page } = pagination;
-    
       // 1. Fetch posts from MongoDB
       const posts = await Post.find(filters)
         .sort({ createdAt: -1 })
@@ -112,6 +88,7 @@ class PostService{
         .skip((page - 1) * limit)
         .populate({ path: "communityId", select: "name" });
     
+        
       if (posts.length === 0) {
         return [];
       }
@@ -137,9 +114,10 @@ class PostService{
       // 3. Fetch user details from your REST API endpoint
       if (userIds.length > 0) {
         const userResponse = await fetch(
-          `https://empathaiv2-backend.onrender.com/users?ids=${userIds.join(",")}`
+          `http://localhost:5003/users?ids=${userIds.join(",")}`
         );
         if (!userResponse.ok) {
+          console.log("Error in userid fetch")
           throw new Error("Failed to fetch user details");
         }
         const users = await userResponse.json();
@@ -208,9 +186,11 @@ class PostService{
       // 2. Fetch user details if we have any user IDs
       if (userIds.length > 0) {
         const userResponse = await fetch(
-          `https://empathaiv2-backend.onrender.com/users?ids=${userIds.join(",")}`
+          `http://localhost:5003/users?ids=${userIds.join(",")}`
         );
         if (!userResponse.ok) {
+          console.log("Error in 2")
+
           throw new Error("Failed to fetch user details");
         }
         const users = await userResponse.json();
@@ -338,9 +318,11 @@ class PostService{
       
         // 3. Fetch user details via a REST API endpoint that returns [{ id, username, profile_picture }]
         const userResponse = await fetch(
-          `https://empathaiv2-backend.onrender.com/users?ids=${userIds.join(",")}`
+          `http://localhost:5003/users?ids=${userIds.join(",")}`
         );
         if (!userResponse.ok) {
+          console.log("Error in 3")
+
           throw new Error("Failed to fetch user details");
         }
         const users = await userResponse.json();
@@ -413,6 +395,60 @@ class PostService{
 
         await post.save();
         return { message: `Post ${action} successfully!` };
+    }
+
+    async getPostsByUser(userId, { page = 1, limit = 20 } = {}) {
+      // 1) Query Mongo for that user’s posts
+      const skip = (page - 1) * limit;
+      const posts = await Post.find({ userId })
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .populate({ path: "communityId", select: "name" }); // if you need community name
+  
+      // 2) Gather all userIds (authors + commenters) for enrichment
+      const userIds = new Set();
+      posts.forEach((p) => {
+        userIds.add(p.userId);
+        (p.comments || []).forEach((c) => {
+          if (c.userId) userIds.add(c.userId);
+        });
+      });
+  
+      // 3) Fetch usernames from your Postgres-backed /users endpoint
+      let userMap = {};
+      if (userIds.size) {
+        const resp = await fetch(
+          `http://localhost:5003/users?ids=${[...userIds].join(",")}`
+        );
+        const users = await resp.json();
+        users.forEach((u) => {
+          userMap[u.id] = u.username;
+        });
+      }
+  
+      // 4) Build the final enriched array
+      const result = posts.map((postDoc) => {
+        const post = postDoc.toObject();
+        post.username = userMap[post.userId] || "Unknown";
+  
+        post.comments = (post.comments || []).map((c) => {
+          return {
+            ...c,
+            commentUsername: userMap[c.userId] || "Unknown",
+          };
+        });
+  
+        return post;
+      });
+  
+      return result;
+    }
+
+    async countByUser(userId) {
+       count = await Post.countDocuments({ userId });
+       console.log(count)
+       return count
     }
 
 }

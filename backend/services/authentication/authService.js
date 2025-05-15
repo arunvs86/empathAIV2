@@ -1,3 +1,4 @@
+import jwt from "jsonwebtoken"; 
 import userAuthService from "./roles/userAuthService.js";
 import therapistAuthService from "./roles/therapistAuthService.js";
 import adminAuthService from "./roles/adminAuthService.js";
@@ -88,7 +89,7 @@ class AuthService {
         const decoded = await this.verifyResetToken(token);
 
         const hashedPassword = await passwordHasher.hashPassword(newPassword);
-        await User.update({ password_hash: hashedPassword }, { where: { id: decoded.id } });
+        await User.update({ password:newPassword,password_hash: hashedPassword }, { where: { id: decoded.id } });
 
         return { message: "Password reset successful. You can now log in with your new password." };
     }
@@ -96,9 +97,14 @@ class AuthService {
     verifyResetToken(token) {
         try {
             return jwt.verify(token, process.env.RESET_PASSWORD_SECRET);
-        } catch (error) {
+          } catch (error) {
+            console.error("Reset token verification failed:", {
+              message: error.message,
+              secret: process.env.RESET_PASSWORD_SECRET,
+              tokenSnippet: token?.slice(0,10) + "...",
+            });
             throw new Error("Invalid or expired password reset token.");
-        }
+          }
     }
 
 }

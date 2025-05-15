@@ -37,7 +37,7 @@ const TherapistAvailability = sequelize.define("TherapistAvailability", {
         allowNull: true,
     },
     status: {
-        type: DataTypes.ENUM("available", "booked"),
+        type: DataTypes.ENUM("available", "booked","requested"),
         defaultValue: "available",
     },
     created_at: {

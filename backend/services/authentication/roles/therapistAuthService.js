@@ -7,7 +7,7 @@ class TherapistAuthService extends UserAuthService {
 
         const therapist = await Therapist.create({
             user_id: user.id,
-            specialization_tags: roleData.specialization_tags,
+            // specialization_tags: roleData.specialization_tags,
             experience_years: roleData.experience_years, 
             license_number: roleData.license_number,
             languages_spoken: roleData.languages_spoken || [], 

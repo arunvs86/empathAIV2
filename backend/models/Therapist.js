@@ -1,80 +1,180 @@
+// import { DataTypes } from "sequelize";
+// import { sequelize } from "../config/postgres.js";
+// import User from "./User.js"; // Import User model
+
+// const Therapist = sequelize.define("Therapist", {
+//     id: {
+//         type: DataTypes.UUID,
+//         defaultValue: DataTypes.UUIDV4,
+//         primaryKey: true,
+//     },
+//     user_id: {
+//         type: DataTypes.UUID,
+//         allowNull: false,
+//         references: {
+//             model: "Users",
+//             key: "id",
+//         },
+//         onDelete: "CASCADE",
+//     },
+//     specialization_tags: {
+//         type: DataTypes.ARRAY(DataTypes.STRING), 
+//         allowNull: false,
+//     },
+//     experience_years: {
+//         type: DataTypes.INTEGER,
+//         allowNull: false,
+//         defaultValue: 0,
+//     },
+//     license_number: {
+//         type: DataTypes.STRING(50),
+//         allowNull: false,
+//         unique: true,
+//     },
+//     languages_spoken: {
+//         type: DataTypes.ARRAY(DataTypes.STRING), 
+//         allowNull: true,
+//     },
+//     session_duration: {
+//         type: DataTypes.INTEGER, 
+//         defaultValue: 60, 
+//     },
+//     appointment_types: {
+//         type: DataTypes.ARRAY(DataTypes.STRING), 
+//         allowNull: false,
+//         defaultValue: ["text", "voice"],
+//     },
+//     verified: {
+//         type: DataTypes.BOOLEAN,
+//         defaultValue: false, 
+//     },
+//     availability_preference: {
+//         type: DataTypes.ENUM("weekly_schedule", "custom_dates"),
+//         defaultValue: "weekly_schedule",
+//     },
+//     ratings: {
+//         type: DataTypes.FLOAT,
+//         defaultValue: 0,
+//         validate: { min: 0, max: 5 }, 
+//     },
+//     created_at: {
+//         type: DataTypes.DATE,
+//         defaultValue: DataTypes.NOW,
+//     },
+//     updated_at: {
+//         type: DataTypes.DATE,
+//         defaultValue: DataTypes.NOW,
+//         allowNull:true
+//     },
+//     deleted_at: {
+//         type: DataTypes.DATE, 
+//         allowNull: true,
+//     },
+// }, {
+//     timestamps: true,
+// });
+
+// User.hasOne(Therapist, {foreignKey:"user_id", onDelete: "CASCADE"});
+// Therapist.belongsTo(User, {foreignKey:"user_id"}) 
+
+// export default Therapist;
+
+
 import { DataTypes } from "sequelize";
 import { sequelize } from "../config/postgres.js";
-import User from "./User.js"; // Import User model
+import User from "./User.js";
 
-const Therapist = sequelize.define("Therapist", {
+const Therapist = sequelize.define(
+  "Therapist",
+  {
     id: {
-        type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4,
-        primaryKey: true,
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true,
     },
     user_id: {
-        type: DataTypes.UUID,
-        allowNull: false,
-        references: {
-            model: "Users",
-            key: "id",
-        },
-        onDelete: "CASCADE",
+      type: DataTypes.UUID,
+      allowNull: false,
+      references: {
+        model: "Users",
+        key: "id",
+      },
+      onDelete: "CASCADE",
     },
-    specialization_tags: {
-        type: DataTypes.ARRAY(DataTypes.STRING), 
-        allowNull: false,
-    },
+    // specialization_tags: {
+    //   // Use ENUM array to match existing enum type in Postgres
+    //   type: DataTypes.ARRAY(
+    //     DataTypes.ENUM(
+    //       "Anxiety",
+    //       "Depression",
+    //       "Grief",
+    //       "Stress",
+    //       "Trauma",
+    //       "Relationship",
+    //       "Addiction"
+    //     )
+    //   ),
+    //   allowNull: false,
+    // },
     experience_years: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        defaultValue: 0,
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
     },
     license_number: {
-        type: DataTypes.STRING(50),
-        allowNull: false,
-        unique: true,
+      type: DataTypes.STRING(50),
+      allowNull: false,
+      unique: true,
     },
     languages_spoken: {
-        type: DataTypes.ARRAY(DataTypes.STRING), 
-        allowNull: true,
+      type: DataTypes.ARRAY(DataTypes.STRING),
+      allowNull: true,
     },
     session_duration: {
-        type: DataTypes.INTEGER, 
-        defaultValue: 60, 
+      type: DataTypes.INTEGER,
+      defaultValue: 60,
     },
     appointment_types: {
-        type: DataTypes.ARRAY(DataTypes.STRING), 
-        allowNull: false,
-        defaultValue: ["text", "voice"],
+      type: DataTypes.ARRAY(DataTypes.STRING),
+      allowNull: false,
+      defaultValue: ["text", "voice"],
     },
     verified: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false, 
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
     },
     availability_preference: {
-        type: DataTypes.ENUM("weekly_schedule", "custom_dates"),
-        defaultValue: "weekly_schedule",
+      type: DataTypes.ENUM("weekly_schedule", "custom_dates"),
+      defaultValue: "weekly_schedule",
     },
     ratings: {
-        type: DataTypes.FLOAT,
-        defaultValue: 0,
-        validate: { min: 0, max: 5 }, 
+      type: DataTypes.FLOAT,
+      defaultValue: 0,
+      validate: { min: 0, max: 5 },
     },
     created_at: {
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW,
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
+      allowNull: false,
     },
     updated_at: {
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW,
-        allowNull:true
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
+      allowNull: false,
     },
     deleted_at: {
-        type: DataTypes.DATE, 
-        allowNull: true,
+      type: DataTypes.DATE,
+      allowNull: true,
     },
-}, {
+  },
+  {
     timestamps: true,
-});
+    paranoid: true,
+  }
+);
 
-User.hasOne(Therapist, {foreignKey:"user_id", onDelete: "CASCADE"});
-Therapist.belongsTo(User, {foreignKey:"user_id"}) 
+User.hasOne(Therapist, { foreignKey: "user_id", onDelete: "CASCADE" });
+Therapist.belongsTo(User, { foreignKey: "user_id" });
 
 export default Therapist;
+

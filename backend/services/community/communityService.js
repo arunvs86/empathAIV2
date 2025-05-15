@@ -204,6 +204,16 @@ class CommunityService {
 
         return { message: "User unbanned successfully!" };
     }
+
+    async getByUser(userId) {
+        return Community
+          .find({ members: userId })
+          .sort({ createdAt: -1 });
+      }
+    
+      async countByUser(userId) {
+        return Community.countDocuments({ members: userId });
+      }
 }
 
 export default new CommunityService();

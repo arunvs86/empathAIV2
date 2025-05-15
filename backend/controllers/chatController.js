@@ -54,55 +54,6 @@ export const getUserChats = async (req, res) => {
   }
 };
 
-/**
- * Send a message in a chat.
- * The sender is automatically the logged-in user.
- */
-// export const sendMessage = async (req, res) => {
-//   try {
-//     const userId = req.user.id;
-//     const { chatId, content, media, messageType } = req.body;
-//     if (!chatId) {
-//       return res.status(400).json({ error: "chatId is required." });
-//     }
-
-//     const updatedMessageDoc = await chatService.sendMessage({
-//       chatId,
-//       senderId: userId,
-//       content,
-//       media,
-//       messageType,
-//     });
-//     return res.json(updatedMessageDoc);
-//   } catch (error) {
-//     console.error(error);
-//     return res.status(500).json({ error: "Error sending message." });
-//   }
-// };
-
-// chatController.js
-// export const sendMessage = async (req, res) => {
-//   try {
-//     const userId = req.user.id;
-//     const { chatId, content, media, messageType } = req.body;
-
-//     const updatedMessageDoc = await chatService.sendMessage({
-//       chatId,
-//       senderId: userId,
-//       content,
-//       media,
-//       messageType,
-//     });
-
-//     // The newly added message is the last element in updatedMessageDoc.messages
-//     const newMessage = updatedMessageDoc.messages[updatedMessageDoc.messages.length - 1];
-
-//     return res.json(newMessage); // Return just the new message object
-//   } catch (error) {
-//     console.error(error);
-//     return res.status(500).json({ error: "Error sending message." });
-//   }
-// };
 
 export const sendMessage = async (req, res) => {
   try {

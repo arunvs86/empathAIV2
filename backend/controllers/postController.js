@@ -149,6 +149,19 @@ class PostController {
             res.status(400).json({ error: error.message });
         }
     }
+
+    async getPostsByUser(req, res) {
+        try {
+          const { userId } = req.params;
+          const page  = parseInt(req.query.page,  10) || 1;
+          const limit = parseInt(req.query.limit, 10) || 20;
+    
+          const posts = await postService.getPostsByUser(userId, { page, limit });
+          return res.status(200).json(posts);
+        } catch (err) {
+          return res.status(400).json({ error: err.message });
+        }
+      }
     
 }
 

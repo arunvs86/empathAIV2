@@ -79,6 +79,18 @@ class AppointmentController {
           res.status(400).json({ error: error.message });
         }
       }
+
+      async getUpcomingAppointments(req, res) {
+        try {
+          const userId = req.user.id;
+          const role   = req.user.role; // "therapist" or "user"
+          const appointments = await appointmentService.getUpcomingAppointments(userId, role);
+          res.status(200).json(appointments);
+        } catch (error) {
+          console.error("Error in getUpcomingAppointments:", error);
+          res.status(400).json({ error: error.message });
+        }
+      }
       
 }
 

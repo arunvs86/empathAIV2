@@ -23,6 +23,15 @@ class TherapistAvailabilityController {
     }
   }
   
+  async getTherapistByUserId(req, res) {
+    try {
+      const therapist = await therapistAvailabilityService.getTherapistByUserId(req.params.id);
+      res.status(200).json(therapist);
+    } catch (error) {
+      res.status(404).json({ error: error.message });
+    }
+  }
+
   async setAvailability(req, res) {
     try {
       // user.id is the userId from authMiddleware
@@ -98,6 +107,20 @@ class TherapistAvailabilityController {
       res.status(400).json({ error: error.message });
     }
   }
+
+  async getAvailabilityForTherapist(req, res) {
+    const therapistId = req.params.therapistId;
+    console.log(therapistId)
+    try {
+      const records = await TherapistAvailability.findAll({
+        where: { therapist_id: therapistId },
+      });
+      res.json(records);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  }
+
 }
 
 export default new TherapistAvailabilityController();

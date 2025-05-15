@@ -83,6 +83,10 @@ import therapistAvailabilityRoutes from "./routes/therapistAvailabilityRoutes.js
 import appointmentRoutes from "./routes/appointmentRoutes.js";
 import chatRoutes from "./routes/chatRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
+import journalRoutes from "./routes/journalRoutes.js"
+import media from "./routes/media.js"
+import botRoutes from "./routes/botRoutes.js"
+import "./cron/botCron.js";
 
 dotenv.config({ path: "./.env" });
 
@@ -107,13 +111,17 @@ app.get("/", (req, res) => {
 });
 
 // Mount routes
+
 app.use("/auth", authRoutes);
+app.use("/media", media);
 app.use("/posts", postRoutes);
 app.use("/communities", communityRoutes);
 app.use("/therapists", therapistAvailabilityRoutes);
 app.use("/appointments", appointmentRoutes);
 app.use("/chats", chatRoutes);
 app.use("/users", userRoutes);
+app.use('/journals', journalRoutes);
+app.use("/bot", botRoutes);
 
 // Create HTTP server
 const server = http.createServer(app);

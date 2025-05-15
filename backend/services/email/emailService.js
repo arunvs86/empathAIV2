@@ -27,7 +27,7 @@ class EmailService {
             { expiresIn: "1h" }
         );
 
-        const verificationLink = `https://empathaiv2-backend.onrender.com/auth/verify-email?token=${token}`;
+        const verificationLink = `http://localhost:5003/auth/verify-email?token=${token}`;
 
         const mailOptions = {
             from: process.env.EMAIL_FROM,
@@ -57,8 +57,9 @@ class EmailService {
             process.env.RESET_PASSWORD_SECRET,
             { expiresIn: process.env.RESET_PASSWORD_EXPIRY }
         );
-        console.log(token)
-        const resetLink = `https://empathaiv2-backend.onrender.com/auth/reset-password?token=${token}`;
+
+        console.log("Reset token", token)
+        const resetLink = `http://localhost:5173/reset-password?token=${token}`;
 
         const mailOptions = {
             from: process.env.EMAIL_FROM,
@@ -70,14 +71,53 @@ class EmailService {
         await this.transporter.sendMail(mailOptions);
     }
 
+    async sendAppointmentRequestEmail(appointment, user, therapist) {
+        const scheduledAt = new Date(appointment.scheduled_at).toLocaleString();
+    
+        const mailOptions = {
+          from: process.env.EMAIL_FROM,
+          to: user.email,
+          subject: "Appointment Request - EmpathAI",
+          text: `Hello ${user.username},\n\nYour appointment with ${therapist.username} has been requested at ${scheduledAt}.\n\nThank you for choosing EmpathAI.\n\nBest regards,\nEmpathAI Team`,
+        };
+    
+        await this.transporter.sendMail(mailOptions);
+      }
+
     async sendAppointmentConfirmationEmail(appointment, user, therapist) {
         const scheduledAt = new Date(appointment.scheduled_at).toLocaleString();
     
         const mailOptions = {
           from: process.env.EMAIL_FROM,
           to: user.email,
-          subject: "Appointment Confirmation - EmpathAI",
-          text: `Hello ${user.username},\n\nYour appointment with ${therapist.username} has been confirmed for ${scheduledAt}.\n\nThank you for choosing EmpathAI.\n\nBest regards,\nEmpathAI Team`,
+          subject: "Appointment Request - EmpathAI",
+          text: `Hello ${user.username},\n\nYour appointment with ${therapist.username} has been confirmed at ${scheduledAt}.\n\nThank you for choosing EmpathAI.\n\nBest regards,\nEmpathAI Team`,
+        };
+    
+        await this.transporter.sendMail(mailOptions);
+      }
+
+      async sendSlotTakenEmail(appointment, user, therapist) {
+        const scheduledAt = new Date(appointment.scheduled_at).toLocaleString();
+    
+        const mailOptions = {
+          from: process.env.EMAIL_FROM,
+          to: user.email,
+          subject: "Appointment Slot taken - EmpathAI",
+          text: `Hello ${user.username},\n\nYour appointment with ${therapist.username} has been taken by someone else in the queue.\n\nThank you for choosing EmpathAI.\n\nBest regards,\nEmpathAI Team`,
+        };
+    
+        await this.transporter.sendMail(mailOptions);
+      }
+
+      async sendRejectionEmail(appointment, user, therapist) {
+        const scheduledAt = new Date(appointment.scheduled_at).toLocaleString();
+    
+        const mailOptions = {
+          from: process.env.EMAIL_FROM,
+          to: user.email,
+          subject: "Appointment denied - EmpathAI",
+          text: `Hello ${user.username},\n\nYour appointment with ${therapist.username} has been cancelled due to scheduling reasons.\n\nThank you for choosing EmpathAI.\n\nBest regards,\nEmpathAI Team`,
         };
     
         await this.transporter.sendMail(mailOptions);

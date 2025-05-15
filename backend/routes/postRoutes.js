@@ -1,11 +1,20 @@
 import express from "express";
 import postController from "../controllers/postController.js";
 import authMiddleware from "../middleware/authMiddleware.js"
-
 const router = express.Router();
 
+// CREATE
 router.post("/", authMiddleware, postController.createPost);
+
+// FETCH ALL
 router.get("/", postController.getAllPosts);
+
+// FETCH BY USER — must go BEFORE /:id
+router.get(
+  "/user/:userId",
+  authMiddleware,
+  postController.getPostsByUser
+);
 router.get("/:id", postController.getPostById);
 router.put("/:id", authMiddleware, postController.updatePost);
 router.delete("/:id", authMiddleware, postController.deletePost);

@@ -36,84 +36,19 @@ class TherapistAvailabilityService {
     return therapist;
   }
 
-  // async splitTimeRange(timeRange) {
-  //   // Remove extra spaces and potential 'am/pm' text (assumes 24h format for simplicity)
-  //   const cleanRange = timeRange.trim().replace(/\s*(am|pm)/gi, "");
-  //   const [startStr, endStr] = cleanRange.split("-");
-  //   const [startHour, startMinute] = startStr.split(":").map(Number);
-  //   const [endHour, endMinute] = endStr.split(":").map(Number);
-  
-  //   // Convert times to total minutes
-  //   const startMinutes = startHour * 60 + startMinute;
-  //   const endMinutes = endHour * 60 + endMinute;
-  
-  //   const slots = [];
-  //   // Create slots by incrementing by 60 minutes (one hour) at a time
-  //   for (let t = startMinutes; t < endMinutes; t += 60) {
-  //     const slotStart = t;
-  //     const slotEnd = t + 60;
-  //     // Only add the slot if the full hour fits within the range
-  //     if (slotEnd <= endMinutes) {
-  //       slots.push(`${this.formatTime(slotStart)}-${this.formatTime(slotEnd)}`);
-  //     }
-  //   }
-  //   return slots;
-  // }
-  
-  // async formatTime(totalMinutes) {
-  //   const hour = Math.floor(totalMinutes / 60);
-  //   const minute = totalMinutes % 60;
-  //   return `${hour.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")}`;
-  // }
-  
-  
-  // async setAvailability(therapistId, availabilityData) {
-  //   let availability = await TherapistAvailability.findOne({ where: { therapist_id: therapistId } });
-
-  //   const therapist = await Therapist.findOne({ where: { user_id: therapistId } });
-  //   if (!therapist) {
-  //     throw new Error("Therapist does not exist. Ensure the account is verified." + therapistId);
-  //   }
-
-  //   const processedTimeSlots = {};
-  // // Assuming availabilityData.selected_time_slots is an object mapping dates to an array of strings
-  // for (const date in availabilityData.selected_time_slots) {
-  //   processedTimeSlots[date] = [];
-  //   for (const slot of availabilityData.selected_time_slots[date]) {
-  //     // If the slot contains a range indicator, split it
-  //     if (slot.includes("-")) {
-  //       const oneHourSlots = this.splitTimeRange(slot);
-  //       processedTimeSlots[date].push(...oneHourSlots);
-  //     } else {
-  //       // Otherwise, just keep the slot as-is
-  //       processedTimeSlots[date].push(slot);
-  //     }
-  //   }
-  // }
-  
-  //   // If no availability record, create a new one
-  //   if (!availability) {
-  //     availability = await TherapistAvailability.create({
-  //       therapist_id: therapist.id,
-  //       selected_dates: availabilityData.selected_dates || [],
-  //       selected_time_slots: processedTimeSlots,
-  //       availability_type: availabilityData.availability_type || "manual",
-  //       ai_input_text: availabilityData.ai_input_text || null,
-  //       ai_processed_slots: availabilityData.ai_processed_slots || {}
-  //     });
-  //   } else {
-  //     // Otherwise update the existing record
-  //     await availability.update({
-  //       selected_dates: availabilityData.selected_dates || [],
-  //       selected_time_slots: processedTimeSlots,
-  //       availability_type: availabilityData.availability_type || "manual",
-  //       ai_input_text: availabilityData.ai_input_text || null,
-  //       ai_processed_slots: availabilityData.ai_processed_slots || {}
-  //     });
-  //   }
-
-  //   return { message: "Availability updated successfully!" };
-  // }
+  async getTherapistByUserId(therapistId) {
+    const therapist = await Therapist.findOne({
+      where: { user_id: therapistId },
+      include: [
+        {
+          model: User,
+          attributes: ["username", "profile_picture"],
+        },
+      ],
+    });
+    if (!therapist) throw new Error("Therapist not found");
+    return therapist;
+  }
 
 splitTimeRange(timeRange) {
   console.log("splitTimeRange input:", timeRange);
