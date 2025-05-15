@@ -60,34 +60,62 @@ class AppointmentService {
       }
   
       // 5) Parse the requested time
+      // const requestedDateObj = new Date(scheduled_at);
+      // if (isNaN(requestedDateObj)) {
+      //   throw new Error("Invalid scheduled_at format.");
+      // }
+      // const reqDate = requestedDateObj.toISOString().split("T")[0];
+      // const reqMinutes =
+      //   requestedDateObj.getHours() * 60 + requestedDateObj.getMinutes();
+  
+      // // 6) Available slots for that date
+      // const availableSlotsForDate = mergedSlotsByDate[reqDate] || [];
+      // console.log(availableSlotsForDate)
+      // // 7) Check it falls in one of those slots
+      // const isAvailable = availableSlotsForDate.some((slotStr) => {
+      //   const [startStr, endStr] = slotStr.split(/\s*[–-]\s*/);
+      //   if (!startStr || !endStr) return false;
+  
+      //   const [h1, m1] = startStr.split(":").map(Number);
+      //   const [h2, m2] = endStr.split(":").map(Number);
+      //   if ([h1, m1, h2, m2].some(isNaN)) return false;
+  
+      //   const startMin = h1 * 60 + m1;
+      //   const endMin = h2 * 60 + m2;
+      //   return reqMinutes >= startMin && reqMinutes < endMin;
+      // });
+  
+      // if (!isAvailable) {
+      //   throw new Error("Therapist is not available at the requested time.");
+      // }
+
       const requestedDateObj = new Date(scheduled_at);
-      if (isNaN(requestedDateObj)) {
-        throw new Error("Invalid scheduled_at format.");
-      }
-      const reqDate = requestedDateObj.toISOString().split("T")[0];
-      const reqMinutes =
-        requestedDateObj.getHours() * 60 + requestedDateObj.getMinutes();
-  
-      // 6) Available slots for that date
-      const availableSlotsForDate = mergedSlotsByDate[reqDate] || [];
-  
-      // 7) Check it falls in one of those slots
-      const isAvailable = availableSlotsForDate.some((slotStr) => {
-        const [startStr, endStr] = slotStr.split(/\s*[–-]\s*/);
-        if (!startStr || !endStr) return false;
-  
-        const [h1, m1] = startStr.split(":").map(Number);
-        const [h2, m2] = endStr.split(":").map(Number);
-        if ([h1, m1, h2, m2].some(isNaN)) return false;
-  
-        const startMin = h1 * 60 + m1;
-        const endMin = h2 * 60 + m2;
-        return reqMinutes >= startMin && reqMinutes < endMin;
-      });
-  
-      if (!isAvailable) {
-        throw new Error("Therapist is not available at the requested time.");
-      }
+const year  = requestedDateObj.getFullYear();
+const month = String(requestedDateObj.getMonth() + 1).padStart(2, "0");
+const day   = String(requestedDateObj.getDate()).padStart(2, "0");
+const reqDate = `${year}-${month}-${day}`;
+const reqMinutes =
+  requestedDateObj.getHours() * 60 + requestedDateObj.getMinutes();
+
+// 6) Grab the slots array
+const availableSlotsForDate = mergedSlotsByDate[reqDate] || [];
+console.log("slots for", reqDate, "→", availableSlotsForDate);
+
+// 7) And now check
+const isAvailable = availableSlotsForDate.some((slotStr) => {
+  const [startStr, endStr] = slotStr.split(/\s*[–-]\s*/);
+  const [h1, m1] = startStr.split(":").map(Number);
+  const [h2, m2] = endStr.split(":").map(Number);
+  if ([h1, m1, h2, m2].some(isNaN)) return false;
+
+  const startMin = h1 * 60 + m1;
+  const endMin   = h2 * 60 + m2;
+  return reqMinutes >= startMin && reqMinutes < endMin;
+});
+
+if (!isAvailable) {
+  throw new Error("Therapist is not available at the requested time.");
+}
   
       // 8) Block if already confirmed
       const conflict = await Appointments.findOne({
