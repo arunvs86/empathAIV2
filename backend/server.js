@@ -44,11 +44,15 @@ connectPostgres().then(() => {
     .catch((err) => console.error("Error syncing models:", err));
 });
 
+const allowedOrigins = [
+  "https://empathaiv2-frontend.onrender.com", 
+  "http://localhost:5173"
+];
 // Middleware
 // app.use(cors());
 app.use(
   cors({
-    origin: "https://empathaiv2-frontend.onrender.com",  // your live frontend URL
+    origin: allowedOrigins,  // your live frontend URL
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
@@ -58,7 +62,7 @@ app.use(
 app.options(
   "*",
   cors({
-    origin: "https://empathaiv2-frontend.onrender.com",
+    origin: allowedOrigins,
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
   })
