@@ -53,11 +53,16 @@
 
 import React, { useState, useEffect } from "react";
 import PostList from "./PostList";
+import PostComposer from "./PostComposer"
 
 function MainContent() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const handlePostCreated = (newPost) => {
+    setPosts([newPost, ...posts]);
+  };
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -107,8 +112,9 @@ function MainContent() {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold mb-4">Posts</h2>
-      <PostList posts={posts} />
+       <PostComposer onPostCreated={(newPost) => setPosts([newPost, ...posts])} />
+  <h2 className="text-2xl font-bold mb-4">Posts</h2>
+  <PostList posts={posts} />
     </div>
   );
 }

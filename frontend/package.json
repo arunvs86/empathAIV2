@@ -12,9 +12,17 @@
   "dependencies": {
     "@tailwindcss/vite": "^4.0.11",
     "axios": "^1.8.1",
+    "country-state-city": "^3.2.1",
+    "framer-motion": "^12.11.0",
+    "lightbox.js-react": "^1.5.3",
+    "lottie-react": "^2.4.1",
+    "lucide-react": "^0.509.0",
     "react": "^19.0.0",
+    "react-calendar": "^5.1.0",
+    "react-calendar-heatmap": "^1.10.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^7.2.0",
+    "react-select": "^5.10.1",
     "socket.io-client": "^4.8.1",
     "tailwindcss": "^4.0.11"
   },
