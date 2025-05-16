@@ -89,17 +89,18 @@ class AppointmentService {
       //   throw new Error("Therapist is not available at the requested time.");
       // }
 
-      const requestedDateObj = new Date(scheduled_at);
-const year  = requestedDateObj.getFullYear();
-const month = String(requestedDateObj.getMonth() + 1).padStart(2, "0");
-const day   = String(requestedDateObj.getDate()).padStart(2, "0");
-const reqDate = `${year}-${month}-${day}`;
-const reqMinutes =
-  requestedDateObj.getHours() * 60 + requestedDateObj.getMinutes();
+      const d = new Date(scheduled_at);
 
-// 6) Grab the slots array
-const availableSlotsForDate = mergedSlotsByDate[reqDate] || [];
-console.log("slots for", reqDate, "→", availableSlotsForDate);
+      // build the date string in UTC
+      const y = d.getUTCFullYear();
+      const mo = String(d.getUTCMonth() + 1).padStart(2, "0");
+      const da = String(d.getUTCDate()).padStart(2, "0");
+      const reqDate = `${y}-${mo}-${da}`;
+      
+      // build the minutes‐since‐midnight in UTC
+      const reqMinutes = d.getUTCHours() * 60 + d.getUTCMinutes();
+      
+      console.log("reqDate/reqMinutes:", reqDate, reqMinutes);
 
 // 7) And now check
 const isAvailable = availableSlotsForDate.some((slotStr) => {
