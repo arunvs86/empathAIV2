@@ -6,7 +6,7 @@ import TherapistAvailability from "../../models/TherapistAvailability.js";
 import User from "../../models/User.js";
 import emailService from "../email/emailService.js";
 import createMeetEvent from '../../utils/calender.js';
-import { utcToZonedTime, format } from 'date-fns-tz';
+import { DateTime } from "luxon";
 
 class AppointmentService {
    
@@ -70,22 +70,14 @@ class AppointmentService {
       // const reqMinutes =
       //   requestedDateObj.getHours() * 60 + requestedDateObj.getMinutes();
 
-      const timeZone = 'Europe/London';
+      const dt = DateTime.fromISO(scheduled_at, { zone: "Europe/London" });
+      if (!dt.isValid) throw new Error("Invalid scheduled_at format.");
 
-      // convert the UTC string into a Date in London time
-      const zonedDate = utcToZonedTime(scheduled_at, timeZone);
-     if (isNaN(zonedDate)) {
-        throw new Error('Invalid scheduled_at format.');
-      }
+      const reqDate    = dt.toFormat("yyyy-MM-dd");      // e.g. "2025-05-17"
+      const reqMinutes = dt.hour * 60 + dt.minute;       // e.g. 12*60 + 15 = 735
 
-      // build YYYY-MM-DD in London
-      const reqDate = format(zonedDate, 'yyyy-MM-dd', { timeZone });
-
-      // compute minutes-since-midnight in London
-      const reqMinutes = zonedDate.getHours() * 60 + zonedDate.getMinutes();
-
-      console.log('slots for', reqDate, '→', mergedSlotsByDate[reqDate]);
-      console.log('reqDate/reqMinutes:', reqDate, reqMinutes);
+      console.log("slots for", reqDate, "→", mergedSlotsByDate[reqDate]);
+      console.log("reqDate/reqMinutes:", reqDate, reqMinutes);
   
       // 6) Available slots for that date
       const availableSlotsForDate = mergedSlotsByDate[reqDate] || [];
