@@ -134,6 +134,38 @@ const TEMPLATES = {
       "🥄 Measure portions instead of eating straight from the package.",
       "🛒 Plan your next grocery trip—include at least 5 colorful foods.",
     ],
+
+    "ReligiousSupport": [
+  "🙏 Offer a silent prayer or moment of gratitude to your higher power, naming your grief and hopes.",
+  "📖 Read a comforting passage from a sacred text—psalms, sutras, verses or scriptures—finding solace.",
+  "🕯️ Light a candle at home or in a place of worship, reflecting on the light and warmth of love.",
+  "🛕 Visit a local temple, church, mosque or synagogue for a communal ritual or quiet meditation.",
+  "🧘‍♂️ Practice a brief mindful meditation focusing on compassion and acceptance of impermanence.",
+  "🎶 Listen to a spiritual hymn, chant or mantra that honors life and the journey through loss.",
+  "🤝 Join a prayer circle or support group to share memories and receive communal comfort.",
+  "🌸 Create a small altar with flowers and photos, offering beauty and remembrance to departed souls.",
+  "✍️ Write a letter to your loved one, then ceremonially burn or bury it as a release ritual.",
+  "🗣️ Recite a short prayer of healing and hope at sunrise or sunset to mark a new beginning.",
+  "🛐 Place an offering of food, water or incense at an altar, symbolizing nurture for the spirit.",
+  "🖼️ Light incense or a fragrant stick, using the rising smoke as a prayer carrier to the divine.",
+  "🧿 Hold a blessed object—rosary beads, mala or prayer rope—to soothe anxiety and focus mind.",
+  "📜 Memorize and recite a teaching on compassion or resilience drawn from your faith tradition.",
+  "🕊️ Release a lantern or biodegradable balloon in memory, visualizing grief lifting away.",
+  "💧 Sprinkle or sip holy water as a symbol of purification and emotional renewal.",
+  "🔔 Ring a bell or use a gong to create a sound offering, shifting energy from sorrow to peace.",
+  "🍞 Share a simple meal in fellowship with others, offering prayers of gratitude before eating.",
+  "🤲 Perform an act of charity or service, dedicating kindness to the memory of your loved one.",
+  "🏵️ Attend or watch a memorial service or religious ceremony to channel grief through ritual.",
+  "🔥 Engage in a safe fire ritual—burning paper prayers or incense—to transform grief into light.",
+  "🦋 Collect a natural token—a leaf, stone or flower—as a tangible reminder of spiritual connection.",
+  "🕉️ Chant a calming mantra or sacred syllable (e.g. Om, Amen, Amin) for three minutes of focus.",
+  "✡️ Meditate on a sacred symbol (cross, star, wheel) that resonates with your beliefs and hope.",
+  "🎨 Paint or draw a spiritual symbol or mandala, visualizing healing and the cycle of life.",
+  "🌅 Watch the sunrise or sunset in stillness, reflecting on renewal and the promise of tomorrow.",
+  "📩 Write and share a gratitude note with your faith community, inviting collective support.",
+  "⏳ Observe a minute of silence at night under the stars, feeling the vastness beyond grief.",
+  "🙏 Close with a simple prayer of gratitude and hope, blessing yourself and those you love."
+]
   };
 
 class BotService {
@@ -151,7 +183,17 @@ class BotService {
       categories: [topic],      // tags it correctly
       anonymous: false
     });
-    console.log(`Bot post created: ${newPost._id} under "${topic}"`);
+
+    const faithTopic = TEMPLATES["ReligiousSupport"];
+    const faithContent = faithTopic[Math.floor(Math.random() * faithTopic.length)];
+    const newFaithBasedPost = await postService.createPost(BOT_USER_ID, {
+      faithContent,
+      media: [],                // or omit if not needed
+      categories: [ReligiousSupport],      // tags it correctly
+      anonymous: false
+    });
+
+    console.log(`Bot post created: ${newFaithBasedPost._id} under "${topic}"`);
     return newPost;
   }
 }
