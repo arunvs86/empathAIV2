@@ -287,7 +287,7 @@ const FloatingHeart = ({ left, delay }) => (
 export default function LetterView() {
   const { id } = useParams();
   const [letter, setLetter] = useState(null);
-  const api = import.meta.env.VITE_API_URL;
+  const api = "https://empathaiv2-backend.onrender.com";
 
   useEffect(() => {
     (async () => {
