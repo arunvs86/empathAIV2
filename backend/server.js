@@ -30,6 +30,7 @@ import journalRoutes from "./routes/journalRoutes.js"
 import media from "./routes/media.js"
 import botRoutes from "./routes/botRoutes.js"
 import "./cron/botCron.js";
+import letterRoutes from "./routes/letterRoutes.js";
 
 dotenv.config({ path: "./.env" });
 
@@ -87,6 +88,7 @@ app.use("/chats", chatRoutes);
 app.use("/users", userRoutes);
 app.use('/journals', journalRoutes);
 app.use("/bot", botRoutes);
+app.use("/letters", letterRoutes);
 
 // Create HTTP server
 const server = http.createServer(app);
