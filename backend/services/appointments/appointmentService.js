@@ -6,6 +6,8 @@ import TherapistAvailability from "../../models/TherapistAvailability.js";
 import User from "../../models/User.js";
 import emailService from "../email/emailService.js";
 import createMeetEvent from '../../utils/calender.js';
+import { utcToZonedTime, format } from 'date-fns-tz';
+
 class AppointmentService {
    
     async bookSession(userId, appointmentData) {
@@ -59,7 +61,7 @@ class AppointmentService {
         mergedSlotsByDate[dateStr] = Array.from(slotSet);
       }
   
-      // 5) Parse the requested time
+      // //5) Parse the requested time
       // const requestedDateObj = new Date(scheduled_at);
       // if (isNaN(requestedDateObj)) {
       //   throw new Error("Invalid scheduled_at format.");
@@ -67,56 +69,44 @@ class AppointmentService {
       // const reqDate = requestedDateObj.toISOString().split("T")[0];
       // const reqMinutes =
       //   requestedDateObj.getHours() * 60 + requestedDateObj.getMinutes();
+
+      const timeZone = 'Europe/London';
+
+      // convert the UTC string into a Date in London time
+      const zonedDate = utcToZonedTime(scheduled_at, timeZone);
+     if (isNaN(zonedDate)) {
+        throw new Error('Invalid scheduled_at format.');
+      }
+
+      // build YYYY-MM-DD in London
+      const reqDate = format(zonedDate, 'yyyy-MM-dd', { timeZone });
+
+      // compute minutes-since-midnight in London
+      const reqMinutes = zonedDate.getHours() * 60 + zonedDate.getMinutes();
+
+      console.log('slots for', reqDate, '→', mergedSlotsByDate[reqDate]);
+      console.log('reqDate/reqMinutes:', reqDate, reqMinutes);
   
-      // // 6) Available slots for that date
-      // const availableSlotsForDate = mergedSlotsByDate[reqDate] || [];
-      // console.log(availableSlotsForDate)
-      // // 7) Check it falls in one of those slots
-      // const isAvailable = availableSlotsForDate.some((slotStr) => {
-      //   const [startStr, endStr] = slotStr.split(/\s*[–-]\s*/);
-      //   if (!startStr || !endStr) return false;
+      // 6) Available slots for that date
+      const availableSlotsForDate = mergedSlotsByDate[reqDate] || [];
+      console.log(availableSlotsForDate)
+      // 7) Check it falls in one of those slots
+      const isAvailable = availableSlotsForDate.some((slotStr) => {
+        const [startStr, endStr] = slotStr.split(/\s*[–-]\s*/);
+        if (!startStr || !endStr) return false;
   
-      //   const [h1, m1] = startStr.split(":").map(Number);
-      //   const [h2, m2] = endStr.split(":").map(Number);
-      //   if ([h1, m1, h2, m2].some(isNaN)) return false;
+        const [h1, m1] = startStr.split(":").map(Number);
+        const [h2, m2] = endStr.split(":").map(Number);
+        if ([h1, m1, h2, m2].some(isNaN)) return false;
   
-      //   const startMin = h1 * 60 + m1;
-      //   const endMin = h2 * 60 + m2;
-      //   return reqMinutes >= startMin && reqMinutes < endMin;
-      // });
+        const startMin = h1 * 60 + m1;
+        const endMin = h2 * 60 + m2;
+        return reqMinutes >= startMin && reqMinutes < endMin;
+      });
   
-      // if (!isAvailable) {
-      //   throw new Error("Therapist is not available at the requested time.");
-      // }
-
-      const d = new Date(scheduled_at);
-
-      // build the date string in UTC
-      const y = d.getUTCFullYear();
-      const mo = String(d.getUTCMonth() + 1).padStart(2, "0");
-      const da = String(d.getUTCDate()).padStart(2, "0");
-      const reqDate = `${y}-${mo}-${da}`;
-      
-      // build the minutes‐since‐midnight in UTC
-      const reqMinutes = d.getUTCHours() * 60 + d.getUTCMinutes();
-      
-      console.log("reqDate/reqMinutes:", reqDate, reqMinutes);
-
-// 7) And now check
-const isAvailable = availableSlotsForDate.some((slotStr) => {
-  const [startStr, endStr] = slotStr.split(/\s*[–-]\s*/);
-  const [h1, m1] = startStr.split(":").map(Number);
-  const [h2, m2] = endStr.split(":").map(Number);
-  if ([h1, m1, h2, m2].some(isNaN)) return false;
-
-  const startMin = h1 * 60 + m1;
-  const endMin   = h2 * 60 + m2;
-  return reqMinutes >= startMin && reqMinutes < endMin;
-});
-
-if (!isAvailable) {
-  throw new Error("Therapist is not available at the requested time.");
-}
+      if (!isAvailable) {
+        throw new Error("Therapist is not available at the requested time.");
+      }
   
       // 8) Block if already confirmed
       const conflict = await Appointments.findOne({
