@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import socket from "../services/socket";
 import { getUserChats, getMessages, sendMessage } from "../services/chatApi";
+import VoiceRecorder from "../components/VoiceRecorder"
 
 function ChatDetail() {
   const { chatId } = useParams();
@@ -45,6 +46,7 @@ function ChatDetail() {
 
     fetchData();
     socket.emit("joinRoom", chatId);
+    
     socket.on("newMessage", (data) => {
       if (data && data.message && data.message.chatId === chatId) {
         setMessages((prev) => {
@@ -54,8 +56,21 @@ function ChatDetail() {
       }
     });
 
+    socket.on("transcriptionReady", ({ messageId, transcript }) => {
+      setMessages(prev =>
+        prev.map(m =>
+          m._id === messageId
+            ? { ...m, transcript, status: "complete" }
+            : m
+        )
+      );
+    });
+    
+
     return () => {
       socket.off("newMessage");
+      socket.off("transcriptionReady");
+
     };
   }, [chatId]);
 
@@ -125,13 +140,46 @@ function ChatDetail() {
     }
   };
 
+  // const renderMessageBubble = (msg, idx) => {
+  //   const isCurrentUser = msg.senderId === currentUserId;
+  //   const bubbleAlign = isCurrentUser ? "justify-end" : "justify-start";
+  //   const bubbleBg = isCurrentUser ? "bg-emerald-100" : "bg-gray-100";
+  //   const textAlign = isCurrentUser ? "text-right" : "text-left";
+  //   const avatarUrl = "/assets/avatar.png"; // Placeholder avatar
+
+  //   return (
+  //     <div key={idx} className={`flex w-full mb-2 ${bubbleAlign}`}>
+  //       {!isCurrentUser && (
+  //         <img
+  //           src={avatarUrl}
+  //           alt="avatar"
+  //           className="w-6 h-6 rounded-full object-cover mr-2 self-end"
+  //         />
+  //       )}
+  //       <div className={`max-w-[65%] p-2 rounded-lg ${bubbleBg} ${textAlign} shadow-sm`}>
+  //         <p className="text-sm text-gray-800">{msg.content}</p>
+  //         <p className="text-xs text-gray-500 mt-1">
+  //           {new Date(msg.createdAt).toLocaleString()}
+  //         </p>
+  //       </div>
+  //       {isCurrentUser && (
+  //         <img
+  //           src={avatarUrl}
+  //           alt="avatar"
+  //           className="w-6 h-6 rounded-full object-cover ml-2 self-end"
+  //         />
+  //       )}
+  //     </div>
+  //   );
+  // };
+
   const renderMessageBubble = (msg, idx) => {
     const isCurrentUser = msg.senderId === currentUserId;
     const bubbleAlign = isCurrentUser ? "justify-end" : "justify-start";
     const bubbleBg = isCurrentUser ? "bg-emerald-100" : "bg-gray-100";
     const textAlign = isCurrentUser ? "text-right" : "text-left";
-    const avatarUrl = "/assets/avatar.png"; // Placeholder avatar
-
+    const avatarUrl = "/assets/avatar.png";
+  
     return (
       <div key={idx} className={`flex w-full mb-2 ${bubbleAlign}`}>
         {!isCurrentUser && (
@@ -141,12 +189,33 @@ function ChatDetail() {
             className="w-6 h-6 rounded-full object-cover mr-2 self-end"
           />
         )}
+  
         <div className={`max-w-[65%] p-2 rounded-lg ${bubbleBg} ${textAlign} shadow-sm`}>
-          <p className="text-sm text-gray-800">{msg.content}</p>
-          <p className="text-xs text-gray-500 mt-1">
-            {new Date(msg.createdAt).toLocaleString()}
-          </p>
+          {msg.messageType === "voice" ? (
+            <>
+              {/* Audio player for voice messages */}
+              <audio
+                src={msg.content}
+                controls
+                preload="none"
+                className="w-full rounded"
+              />
+              {/* Optionally show timestamp or transcript here */}
+              <p className="text-xs text-gray-500 mt-1">
+                {new Date(msg.createdAt).toLocaleString()}
+              </p>
+            </>
+          ) : (
+            <>
+              {/* Text messages */}
+              <p className="text-sm text-gray-800">{msg.content}</p>
+              <p className="text-xs text-gray-500 mt-1">
+                {new Date(msg.createdAt).toLocaleString()}
+              </p>
+            </>
+          )}
         </div>
+  
         {isCurrentUser && (
           <img
             src={avatarUrl}
@@ -157,6 +226,8 @@ function ChatDetail() {
       </div>
     );
   };
+  
+  
 
   return (
     <div className="max-w-lg mx-auto mt-4 bg-white shadow-md rounded border border-gray-200 flex flex-col h-[70vh]">
@@ -181,6 +252,19 @@ function ChatDetail() {
             onChange={(e) => setNewContent(e.target.value)}
             placeholder="Type a message..."
           />
+          <div className="flex space-x-2">
+            {/* <VoiceRecorder chatId={chatId} /> */}
+             <VoiceRecorder
+   chatId={chatId}
+   onUpload={(message) => {
+     // 1) Add the new voice message locally
+     setMessages((prev) => [...prev, message]);
+     // 2) Also broadcast it so other clients see it
+     socket.emit("newMessage", { chatId, message });
+   }}
+ />
+          </div>
+
           <button
             onClick={handleSend}
             className="bg-emerald-600 text-white px-3 py-1 rounded hover:bg-emerald-700 text-sm"
