@@ -90,6 +90,11 @@ app.use('/journals', journalRoutes);
 app.use("/bot", botRoutes);
 app.use("/letters", letterRoutes);
 
+app.use((err, req, res, next) => {
+  console.error("ERROR:", err.stack || err);
+  res.status(err.status || 500).json({ error: err.message || "Internal Server Error" });
+});
+
 // Create HTTP server
 const server = http.createServer(app);
 
@@ -100,6 +105,8 @@ const io = new Server(server, {
     methods: ["GET", "POST"],
   },
 });
+
+app.set("io", io);              // ← make it available on req.app
 
 // Socket.IO event handling
 io.on("connection", (socket) => {

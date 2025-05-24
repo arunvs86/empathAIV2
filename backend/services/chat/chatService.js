@@ -156,3 +156,28 @@ export const getChatMessages = async (chatId) => {
 
   return enrichedDoc;
 };
+
+// export async function patchMessageTranscript({ chatId, messageId, transcript }) {
+//   return Message.findOneAndUpdate(
+//     { chatId, "messages._id": messageId },
+//     {
+//       $set: {
+//         "messages.$.transcript": transcript,
+//         "messages.$.status": "complete"
+//       }
+//     }
+//   );
+// }
+
+export async function patchMessageTranscript({ chatId, messageId, transcript }) {
+  return Message.findOneAndUpdate(
+    { chatId, "messages._id": messageId },
+    {
+      $set: {
+        "messages.$.transcript": transcript,
+        "messages.$.status": "complete",
+      },
+    }
+  );
+}
+

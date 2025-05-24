@@ -13,7 +13,7 @@ export const storage = new CloudinaryStorage({
   cloudinary,
   params: {
     folder: "empathai",
-    allowed_formats: ["jpg","png","gif","mp4","mp3","wav"],
+    allowed_formats: ["jpg","png","gif","mp4","mp3","wav","webm"],
     resource_type: (req, file) => {
       if (file.mimetype.startsWith("image/")) return "image";
       if (file.mimetype.startsWith("video/")) return "video";
