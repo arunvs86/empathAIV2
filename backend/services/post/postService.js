@@ -1,4 +1,5 @@
 import Post from "../../models/Post.js";
+import User from "../../models/User.js";
 import Community from "../../models/Community.js"
 import UserViolations from "../../models/UserViolations.js"
 
@@ -7,6 +8,7 @@ class PostService{
     async createPost(userId, postData) {
       const { content, media, categories, community_id } = postData;
       console.log(postData)
+      const user = await User.findByPk(userId)
       // Validate community membership if community_id is provided
       if (community_id) {
           const community = await Community.findById(community_id);
@@ -34,47 +36,51 @@ class PostService{
       ];
        
       try {
-          // Call your classification API endpoint.
-          // const response = await fetch('https://flask-app-275410178944.europe-west2.run.app/classify', {  
-          //     method: 'POST',
-          //     headers: {
-          //         'Content-Type': 'application/json'
-          //     },
-          //     body: JSON.stringify({
-          //         user_post: content,
-          //         candidate_labels: candidateLabels
-          //     })
-          // });
-          
-          // // Parse the API response
-          // const result = await response.json();
-          
-          // // Sort topics by score (highest first) and take the top 2 labels
-          // let topTwoCategories = [];
-          // if (result.topics && result.topics.length > 0) {
-          //     result.topics.sort((a, b) => b.score - a.score);
-          //     topTwoCategories = result.topics.slice(0, 2).map(topic => topic.label);
-          // }
-          
-          // // Optionally log the result for debugging:
-          // console.log("Top two categories:", topTwoCategories);
-          
-          // // --- End New Classification Logic ---
-          
-          // Create the new post with the top two categories from the classification API.
-          const newPost = await Post.create({
-              userId,
-              content,
-              media,
-              categories, // Use the classified top two categories
-              communityId: community_id || null
-          });
-          
-          return newPost;
+        const response = await fetch('https://flask-app-275410178944.europe-west2.run.app/classify', {  
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            user_post: content,
+            candidate_labels: candidateLabels
+          })
+        });
+        const result = await response.json();
+      
+        // If no topics or top score too low, discard post
+        if (!result.topics || result.topics.length === 0) {
+          throw new Error("Your post has been removed by Team EmpathAI for its disturbing content.");
+        }
+        // Sort by score desc
+        result.topics.sort((a, b) => b.score - a.score);
+      
+        // Set your minimum acceptable score threshold
+        const MIN_SCORE = 0.3;
+        if (result.topics[0].score < MIN_SCORE || result.topics[0].label === "Offensive Content" || result.topics[0].label === "Abuse & Harassment") {
+          throw new Error("Your post has been removed by Team EmpathAI for its disturbing content.");
+        }
+      
+        // Take top two labels
+        const topTwoCategories = result.topics.slice(0, 2).map((t) => t.label);
+        console.log("Top two categories:", topTwoCategories);
+      
+        // Create the post as before
+        const newPost = await Post.create({
+          userId,
+          content,
+          media,
+          categories: topTwoCategories,
+          communityId: community_id || null,
+        });
+      
+        // Attach username if you need
+        const postObj = newPost.toObject();
+        postObj.username = user.username;
+      
+        return postObj;
+
       } catch (error) {
           // Handle errors from the classification API call if needed
-          console.error("Error during classification:", error);
-          throw new Error("Post creation failed due to classification error.");
+          throw new Error(error);
       }
   }
   
@@ -133,13 +139,13 @@ class PostService{
           const postObj = post.toObject();
     
           // Attach username to the top-level post
-          postObj.username = userMap[postObj.userId] || "Unknown";
+          postObj.username = userMap[postObj.userId] || "EmpathAIUser";
     
           // For each comment, attach commentUsername
           postObj.comments = postObj.comments.map((comment) => {
             return {
               ...comment,
-              commentUsername: userMap[comment.userId] || "Unknown",
+              commentUsername: userMap[comment.userId] || "EmpathAIUser",
             };
           });
     
@@ -206,13 +212,13 @@ class PostService{
           const postObj = post.toObject();
     
           // Post author's username
-          postObj.username = userMap[postObj.userId] || "Unknown";
+          postObj.username = userMap[postObj.userId] || "EmpathAIUser";
     
           // Enrich each comment with commentUsername
           postObj.comments = postObj.comments.map((comment) => {
             return {
               ...comment,
-              commentUsername: userMap[comment.userId] || "Unknown",
+              commentUsername: userMap[comment.userId] || "EmpathAIUser",
             };
           });
     
@@ -430,12 +436,12 @@ class PostService{
       // 4) Build the final enriched array
       const result = posts.map((postDoc) => {
         const post = postDoc.toObject();
-        post.username = userMap[post.userId] || "Unknown";
+        post.username = userMap[post.userId] || "EmpathAIUser";
   
         post.comments = (post.comments || []).map((c) => {
           return {
             ...c,
-            commentUsername: userMap[c.userId] || "Unknown",
+            commentUsername: userMap[c.userId] || "EmpathAIUser",
           };
         });
   

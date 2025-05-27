@@ -33,6 +33,14 @@ function App() {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/signup/:type" element={<Signup />} />
         <Route path="/" element={<HomeLayout />}>
+
+        <Route
+            path="faith"
+            element={
+              // Option A: just reuse MainContent (which auto-filters on /faith)
+              <MainContent />
+            }
+          />
           {/* Nested routes rendered in HomeLayout's <Outlet /> */}
           <Route index element={<MainContent />} />
           <Route path="create" element={<CreatePost />} />

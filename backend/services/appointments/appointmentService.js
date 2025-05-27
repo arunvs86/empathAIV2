@@ -179,7 +179,7 @@ class AppointmentService {
         console.log("appointment:", appointment);
   
         const user = await User.findByPk(appointment.user_id);
-  
+        const therapistDetails = await User.findByPk(therapist.user_id);
         if (!appointment) {
           throw new Error("Appointment not found or unauthorized.");
         }
@@ -228,7 +228,7 @@ class AppointmentService {
           await emailService.sendAppointmentConfirmationEmail(
             appointment,
             user,
-            therapist
+            therapistDetails
           );
   
           // 5) Bulk‑reject other pendings at same slot

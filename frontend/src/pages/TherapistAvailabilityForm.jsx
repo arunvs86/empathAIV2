@@ -294,11 +294,11 @@ function TherapistAvailabilityForm() {
 
   // get the logged‑in user (therapist)
   const user = JSON.parse(localStorage.getItem("user") || "{}");
-  console.log("user",user)
   const therapistId = user.id;
 
   // --- Tab state ---
   const [activeTab, setActiveTab] = useState("availability");
+  const today = new Date().toISOString().split("T")[0];
 
   // --- Availability states ---
   const [dateInput, setDateInput] = useState("");
@@ -379,11 +379,21 @@ function TherapistAvailabilityForm() {
   const addTimeSlot = (date) => {
     const slot = timeSlotInputs[date];
     if (!slot) return;
+
+    // 1) Prevent duplicate
+  const existing = timeSlotsMap[date] || [];
+  if (existing.includes(slot)) {
+    setError("You have already added that slot.");
+    return;
+  }
+
     setTimeSlotsMap((m) => ({
       ...m,
-      [date]: [...(m[date] || []), slot],
+      // [date]: [...(m[date] || []), slot],
+      [date]: [...existing, slot],
     }));
     setTimeSlotInputs((m) => ({ ...m, [date]: "" }));
+    setError("");
   };
 
   // Submit availability: one slot per API call
@@ -502,6 +512,7 @@ function TherapistAvailabilityForm() {
             </label>
             <input
               type="date"
+              min={today}              
               value={dateInput}
               onChange={handleDateChange}
               className="border px-3 py-2 rounded focus:ring-emerald-400"

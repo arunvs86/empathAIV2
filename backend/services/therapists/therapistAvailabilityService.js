@@ -165,14 +165,30 @@ async setAvailability(therapistId, availabilityData) {
 }
 
 
-  /**
-   * Fetch Therapist Availability by therapist_id
-   */
   async getAvailability(therapistId) {
-    const availability = await TherapistAvailability.findAll({ where: { therapist_id: therapistId } });
-    if (!availability) throw new Error("No availability set for this therapist.");
-    console.log(availability);
-    return availability;
+    // 1) fetch all records
+    const records = await TherapistAvailability.findAll({
+      where: { therapist_id: therapistId },
+    });
+
+    if (!records.length) {
+      throw new Error("No availability set for this therapist.");
+    }
+
+    // 2) compute “today at midnight” so we only show dates >= today
+    const today = new Date();
+    // today.setHours(0, 0, 0, 0);
+
+    // 3) keep only records that have at least one future date
+    const futureRecords = records.filter((rec) => {
+      // selected_dates is e.g. ['2025-05-17', '2025-05-18']
+      return rec.selected_dates.some((d) => {
+        const dt = new Date(d);
+        return dt >= today;
+      });
+    });
+
+    return futureRecords;
   }
 
   /**

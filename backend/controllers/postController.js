@@ -10,7 +10,8 @@ class PostController {
             const newPost = await postService.createPost(userId, req.body);
             res.status(201).json(newPost);
         } catch (error) {
-            res.status(400).json({ error: error.message });
+            console.log("Logging error here", error)
+            res.status(400).json({ error: error.message});
         }
     }
 

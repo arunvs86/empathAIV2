@@ -1,23 +1,3 @@
-// import React from "react";
-// import PostCard from "./PostCard";
-
-// function PostList({ posts }) {
-//   if (!posts || posts.length === 0) {
-//     return <p className="text-gray-500">No posts available.</p>;
-//   }
-
-//   return (
-//     <div>
-//       {posts.map((post) => (
-//         <PostCard key={post._id} post={post} />
-//       ))}
-//     </div>
-//   );
-// }
-
-// export default PostList;
-
-
 import React, { useState, useEffect } from "react";
 import PostCard from "./PostCard";
 

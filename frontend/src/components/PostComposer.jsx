@@ -64,7 +64,22 @@ export default function PostComposer({ onPostCreated }) {
         },
         body: JSON.stringify(payload),
       });
-      if (!res.ok) throw new Error((await res.json()).message);
+      // console.log(res)
+      // if (!res.ok) {
+      //   const { error } = await res.json();
+      //   throw new Error(error);
+      // }
+
+      const data = await res.json();
+      console.log("POST /posts response:", res.status, data);
+
+      // 2) If non-2xx, use the server-provided error message:
+      if (!res.ok) {
+        // you can either throw or set local UI error state:
+        // throw new Error(data.error || "Unknown error");
+        return alert(data.error || "Failed to create post");
+      }
+
       onPostCreated(await res.json());
 
       // reset form

@@ -135,7 +135,7 @@ const TEMPLATES = {
       "🛒 Plan your next grocery trip—include at least 5 colorful foods.",
     ],
 
-    "ReligiousSupport": [
+    "Religious Support": [
   "🙏 Offer a silent prayer or moment of gratitude to your higher power, naming your grief and hopes.",
   "📖 Read a comforting passage from a sacred text—psalms, sutras, verses or scriptures—finding solace.",
   "🕯️ Light a candle at home or in a place of worship, reflecting on the light and warmth of love.",
@@ -184,12 +184,12 @@ class BotService {
       anonymous: false
     });
 
-    const faithTopic = TEMPLATES["ReligiousSupport"];
+    const faithTopic = TEMPLATES["Religious Support"];
     const faithContent = faithTopic[Math.floor(Math.random() * faithTopic.length)];
     const newFaithBasedPost = await postService.createPost(BOT_USER_ID, {
-      faithContent,
+      content: faithContent,
       media: [],                // or omit if not needed
-      categories: [ReligiousSupport],      // tags it correctly
+      categories: ['Religious Support'],      // tags it correctly
       anonymous: false
     });
 

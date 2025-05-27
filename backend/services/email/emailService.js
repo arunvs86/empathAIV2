@@ -1,6 +1,7 @@
 import nodemailer from "nodemailer";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import axios from "axios";
 
 dotenv.config();
 
@@ -84,18 +85,90 @@ class EmailService {
         await this.transporter.sendMail(mailOptions);
       }
 
-    async sendAppointmentConfirmationEmail(appointment, user, therapist) {
-        const scheduledAt = new Date(appointment.scheduled_at).toLocaleString();
+    // async sendAppointmentConfirmationEmail(appointment, user, therapist) {
+    //     const scheduledAt = new Date(appointment.scheduled_at).toLocaleString();
     
-        const mailOptions = {
-          from: process.env.EMAIL_FROM,
-          to: user.email,
-          subject: "Appointment Request - EmpathAI",
-          text: `Hello ${user.username},\n\nYour appointment with ${therapist.username} has been confirmed at ${scheduledAt}.\n\nThank you for choosing EmpathAI.\n\nBest regards,\nEmpathAI Team`,
-        };
+    //     const mailOptions = {
+    //       from: process.env.EMAIL_FROM,
+    //       to: user.email,
+    //       subject: "Appointment Request - EmpathAI",
+    //       text: `Hello ${user.username},\n\nYour appointment with ${therapist.username} has been confirmed at ${scheduledAt}.\n\nThank you for choosing EmpathAI.\n\nBest regards,\nEmpathAI Team`,
+    //     };
     
-        await this.transporter.sendMail(mailOptions);
-      }
+    //     await this.transporter.sendMail(mailOptions);
+    //   }
+
+
+async sendAppointmentConfirmationEmail(appointment, user, therapist) {
+  // 1) generate meeting links
+  let clientLink, proLink;
+  try {
+    const { data } = await axios.post(
+      "https://empathaimeet.onrender.com/api/v1/links",
+      {
+        professionalsFullName: therapist.username,
+        proId: therapist.id,
+        clientName: user.username,
+        apptDate: new Date(appointment.scheduled_at).getTime(),
+      },
+      { headers: { "Content-Type": "application/json" } }
+    );
+
+    console.log(data)
+
+    const makeHashUrl = (rawUrl) => {
+      const url = new URL(rawUrl);
+      return `${url.origin}/#${url.pathname}${url.search}`;
+    };
+
+    clientLink = makeHashUrl(data.clientLink);
+    proLink    = makeHashUrl(data.proLink);
+  } catch (err) {
+    console.error("Could not generate meeting links:", err);
+  }
+
+  // 2) format date
+  const when = new Date(appointment.scheduled_at).toLocaleString();
+
+  // 3) build and send the client email
+  const clientMail = {
+    from: process.env.EMAIL_FROM,
+    to:   user.email,
+    subject: "Your EmpathAI Appointment is Confirmed",
+    text: `Hello ${user.username},
+
+Your appointment with ${therapist.username} is confirmed for ${when}.
+${clientLink ? `\nJoin your session here:\n${clientLink}` : ""}
+
+Thank you for choosing EmpathAI.
+
+Warm regards,
+The EmpathAI Team`,
+  };
+
+  console.log(clientMail)
+
+  // 4) build and send the pro email
+  const proMail = {
+    from: process.env.EMAIL_FROM,
+    to:   therapist.email,         // make sure you have therapist.email
+    subject: "New EmpathAI Appointment Booked",
+    text: `Hello ${therapist.username},
+
+You have a new appointment with ${user.username} on ${when}.
+${proLink ? `\nJoin your session here:\n${proLink}` : ""}
+
+Best of luck,
+The EmpathAI Team`,
+  };
+
+  console.log(proMail)
+
+
+  // 5) send both
+  await this.transporter.sendMail(clientMail);
+  await this.transporter.sendMail(proMail);
+}
 
       async sendSlotTakenEmail(appointment, user, therapist) {
         const scheduledAt = new Date(appointment.scheduled_at).toLocaleString();

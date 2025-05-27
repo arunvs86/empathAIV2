@@ -12,7 +12,8 @@ const BOT_TOPICS = [
   "Social Support",
   "Gratitude",
   "Sleep Hygiene",
-  "Healthy Eating"
+  "Healthy Eating",
+  "Religious Support"
 ];
 
 // 2) Helper to choose one at random
@@ -23,6 +24,7 @@ function pickRandom(arr) {
 // 3) Schedule: at minute 0 of every 2nd hour
 cron.schedule(
     "0 */2 * * *",
+    // "* * * * *",
     async () => {
     const topic = pickRandom(BOT_TOPICS);
     console.log(`🕑 [Bot Scheduler] Posting under topic: "${topic}"`);

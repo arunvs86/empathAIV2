@@ -1,120 +1,269 @@
-// import React, { useState } from "react";
-// import PostList from "../components/PostList";
+// import React, { useState, useEffect, useMemo } from "react";
+// import PostList from "./PostList";
+// import PostComposer from "./PostComposer";
 
 // function MainContent() {
-//   const [posts, setPosts] = useState([
-//     {
-//       _id: "p1",
-//       userId: "user-123",
-//       content: "This is my first post about grief support.",
-//       media: ["https://via.placeholder.com/150"],
-//       categories: ["grief", "support"],
-//       anonymous: false,
-//       status: "live",
-//       comments: [
-//         {
-//           userId: "user-456",
-//           text: "I'm here to support you!",
-//           createdAt: new Date().toISOString(),
-//         },
-//       ],
-//       helpful_feedback: [{ userId: "user-789", feedback: "Thanks for sharing" }],
-//       reported_by: [],
-//       createdAt: new Date().toISOString(),
-//       lastEditedAt: null,
-//     },
-//     {
-//       _id: "p2",
-//       userId: "user-999",
-//       content: "Feeling a bit anxious today...",
-//       media: [],
-//       categories: ["anxiety"],
-//       anonymous: true,
-//       status: "live",
-//       comments: [],
-//       helpful_feedback: [],
-//       reported_by: [],
-//       createdAt: new Date().toISOString(),
-//       lastEditedAt: null,
-//     },
-//     // ...more dummy posts
-//   ]);
+//   const [posts, setPosts]       = useState([]);
+//   const [loading, setLoading]   = useState(true);
+//   const [error, setError]       = useState(null);
+
+//   // 1) New UI state
+//   const [searchText, setSearchText]       = useState("");
+//   const [selectedTopic, setSelectedTopic] = useState("");
+//   const [sortOrder, setSortOrder]         = useState("desc"); // 'desc' = newest first
+
+//   // 2) Fetch once on mount
+//   useEffect(() => {
+//     const fetchPosts = async () => {
+//       setLoading(true);
+//       try {
+//         const token = localStorage.getItem("token");
+//         if (!token) throw new Error("Please log in.");
+//         const res = await fetch("https://empathaiv2-backend.onrender.com/posts", {
+//           headers: { Authorization: `Bearer ${token}` },
+//         });
+//         if (!res.ok) {
+//           const err = await res.json();
+//           throw new Error(err.message || "Failed to fetch posts.");
+//         }
+//         setPosts(await res.json());
+//       } catch (err) {
+//         setError(err.message);
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+//     fetchPosts();
+//   }, []);
+
+//   // 3) Extract all topic strings for the dropdown
+//   const allTopics = useMemo(() => {
+//     const topics = posts.flatMap((p) => p.categories || []);
+//     return Array.from(new Set(topics));
+//   }, [posts]);
+
+//   // 4) Apply search, filter, sort
+//   const filteredPosts = useMemo(() => {
+//     let arr = posts;
+//     // full‐text search on content OR username
+//     if (searchText) {
+//       const q = searchText.toLowerCase();
+//       arr = arr.filter(
+//         (p) =>
+//        {const text   = (p.content  || "").toLowerCase();
+//        const author = (p.username || "").toLowerCase();
+//        return text.includes(q) || author.includes(q);
+//        }
+//       );
+//     }
+
+//     // filter by category/topic
+//     if (selectedTopic) {
+//       arr = arr.filter((p) => (p.categories || []).includes(selectedTopic));
+//     }
+
+//     // sort by createdAt
+//     arr = arr.slice().sort((a, b) => {
+//       const da = new Date(a.createdAt);
+//       const db = new Date(b.createdAt);
+//       return sortOrder === "desc" ? db - da : da - db;
+//     });
+
+//     return arr;
+//   }, [posts, searchText, selectedTopic, sortOrder]);
+
+//   // 5) Create button to toggle sortOrder
+//   const toggleSort = () =>
+//     setSortOrder((o) => (o === "desc" ? "asc" : "desc"));
+
+//   if (loading) return <p>Loading posts…</p>;
+//   if (error)   return <p className="text-red-600">{error}</p>;
 
 //   return (
 //     <div>
-//       <h2 className="text-2xl font-bold mb-4">Posts</h2>
-//       <PostList posts={posts} />
+//       <PostComposer onPostCreated={(newPost) => setPosts([newPost, ...posts])} />
+
+//       {/* 🔍 Search & Filter Toolbar */}
+//       <div className="flex flex-wrap items-center justify-between mb-6 space-y-2">
+//         <input
+//           type="text"
+//           placeholder="Search by content or username…"
+//           value={searchText}
+//           onChange={(e) => setSearchText(e.target.value)}
+//           className="border rounded px-3 py-2 flex-1 max-w-xs focus:ring-emerald-400"
+//         />
+
+//         <select
+//           value={selectedTopic}
+//           onChange={(e) => setSelectedTopic(e.target.value)}
+//           className="border rounded px-3 py-2 focus:ring-emerald-400"
+//         >
+//           <option value="">All Topics</option>
+//           {allTopics.map((t) => (
+//             <option key={t} value={t}>
+//               {t}
+//             </option>
+//           ))}
+//         </select>
+
+//         <button
+//           onClick={toggleSort}
+//           className="border rounded px-3 py-2 hover:bg-gray-100"
+//         >
+//           Sort: {sortOrder === "desc" ? "Newest" : "Oldest"}
+//         </button>
+//       </div>
+
+//       {filteredPosts.length === 0 ? (
+//         <p className="text-gray-500">No posts match your criteria.</p>
+//       ) : (
+//         <PostList posts={filteredPosts} />
+//       )}
 //     </div>
 //   );
 // }
 
 // export default MainContent;
 
-
-import React, { useState, useEffect } from "react";
+// src/components/MainContent.jsx
+import React, { useState, useEffect, useMemo } from "react";
 import PostList from "./PostList";
-import PostComposer from "./PostComposer"
+import PostComposer from "./PostComposer";
+import { useLocation } from "react-router-dom";
 
 function MainContent() {
-  const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [posts, setPosts]       = useState([]);
+  const [loading, setLoading]   = useState(true);
+  const [error, setError]       = useState(null);
 
-  const handlePostCreated = (newPost) => {
-    setPosts([newPost, ...posts]);
-  };
+  // Search / filter / sort state
+  const [searchText, setSearchText]       = useState("");
+  const [selectedTopic, setSelectedTopic] = useState("");
+  const [sortOrder, setSortOrder]         = useState("desc"); // 'desc' = newest first
 
+    useEffect(() => {
+        if (location.pathname === "/faith") {
+          setSearchText("");
+          setSelectedTopic("Religious Support");
+        setSortOrder("desc");
+        }
+        // else: leave user’s manual choice intact
+     }, [location.pathname]);
+
+  // Fetch posts once on mount
   useEffect(() => {
     const fetchPosts = async () => {
+      setLoading(true);
       try {
-        // Retrieve token from localStorage
         const token = localStorage.getItem("token");
-        if (!token) {
-          throw new Error("Not authenticated. Please log in.");
-        }
-
-        // Make GET request to /posts with Authorization header
-        const response = await fetch("https://empathaiv2-backend.onrender.com/posts", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+        if (!token) throw new Error("Please log in.");
+        const res = await fetch("https://empathaiv2-backend.onrender.com/posts", {
+          headers: { Authorization: `Bearer ${token}` },
         });
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.message || "Failed to fetch posts.");
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(err.message || "Failed to fetch posts.");
         }
-
-        const data = await response.json();
-        
-        setPosts(data); // data should be an array of posts
+        setPosts(await res.json());
       } catch (err) {
         setError(err.message);
       } finally {
         setLoading(false);
       }
     };
-
     fetchPosts();
   }, []);
 
-  if (loading) {
-    return <p className="text-gray-700">Loading posts...</p>;
-  }
+  // Gather all unique topics for the dropdown
+  const allTopics = useMemo(() => {
+    const topics = posts.flatMap((p) => p.categories || []);
+    return Array.from(new Set(topics));
+  }, [posts]);
 
-  if (error) {
-    return <p className="text-red-600">{error}</p>;
-  }
+  // Derive filtered + sorted list
+  const filteredPosts = useMemo(() => {
+    let arr = posts;
 
-  if (posts.length === 0) {
-    return <p className="text-gray-500">No posts found.</p>;
-  }
+    // Full-text search on content or username
+    if (searchText) {
+      const q = searchText.toLowerCase();
+      arr = arr.filter((p) => {
+        const text   = (p.content  || "").toLowerCase();
+        const author = (p.username || "").toLowerCase();
+        return text.includes(q) || author.includes(q);
+      });
+    }
+
+    // Filter by selected topic
+    if (selectedTopic) {
+      arr = arr.filter((p) => (p.categories || []).includes(selectedTopic));
+    }
+
+    // Sort by createdAt
+    arr = arr.slice().sort((a, b) => {
+      const da = new Date(a.createdAt || 0);
+      const db = new Date(b.createdAt || 0);
+      return sortOrder === "desc" ? db - da : da - db;
+    });
+
+    return arr;
+  }, [posts, searchText, selectedTopic, sortOrder]);
+
+  // Toggle sort order
+  const toggleSort = () =>
+    setSortOrder((o) => (o === "desc" ? "asc" : "desc"));
+
+  // Handle new post creation: prepend + reset filters
+  const handlePostCreated = (newPost) => {
+    setPosts([newPost, ...posts]);
+    setSearchText("");
+    setSelectedTopic("");
+    setSortOrder("desc");
+  };
+
+  if (loading) return <p>Loading posts…</p>;
+  if (error)   return <p className="text-red-600">{error}</p>;
 
   return (
     <div>
-       <PostComposer onPostCreated={(newPost) => setPosts([newPost, ...posts])} />
-  <h2 className="text-2xl font-bold mb-4">Posts</h2>
-  <PostList posts={posts} />
+      <PostComposer onPostCreated={handlePostCreated} />
+
+      {/* Search & Filter Toolbar */}
+      <div className="flex flex-wrap items-center justify-between mb-6 space-y-2">
+        <input
+          type="text"
+          placeholder="Search by content or username…"
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          className="border rounded px-3 py-2 flex-1 max-w-xs focus:ring-emerald-400"
+        />
+
+        <select
+          value={selectedTopic}
+          onChange={(e) => setSelectedTopic(e.target.value)}
+          className="border rounded px-3 py-2 focus:ring-emerald-400"
+        >
+          <option value="">All Topics</option>
+          {allTopics.map((t) => (
+            <option key={t} value={t}>
+              {t}
+            </option>
+          ))}
+        </select>
+
+        <button
+          onClick={toggleSort}
+          className="border rounded px-3 py-2 hover:bg-gray-100"
+        >
+          Sort: {sortOrder === "desc" ? "Newest" : "Oldest"}
+        </button>
+      </div>
+
+      {filteredPosts.length === 0 ? (
+        <p className="text-gray-500">No posts match your criteria.</p>
+      ) : (
+        <PostList posts={filteredPosts} />
+      )}
     </div>
   );
 }
