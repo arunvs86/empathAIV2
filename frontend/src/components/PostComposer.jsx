@@ -80,7 +80,7 @@ export default function PostComposer({ onPostCreated }) {
         return alert(data.error || "Failed to create post");
       }
 
-      onPostCreated(await res.json());
+      onPostCreated(data);
 
       // reset form
       setContent('');
