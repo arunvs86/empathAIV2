@@ -1,32 +1,3 @@
-// import React from "react";
-
-// function CommunityCard({ community, onSelect }) {
-//   const { name, description, type } = community;
-
-//   return (
-//     <div
-//       onClick={() => onSelect(community._id)}
-//       className="bg-white border border-gray-200 rounded-md p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
-//     >
-//       <h3 className="font-semibold text-gray-700 text-lg mb-1">
-//         {name}
-//       </h3>
-//       <p className="text-sm text-gray-600">{description}</p>
-//       <span
-//         className={`px-2 py-1 text-xs rounded ${
-//           type === "public"
-//             ? "bg-green-100 text-green-700"
-//             : "bg-blue-100 text-blue-700"
-//         }`}
-//       >
-//         {type === "public" ? "Public" : "Private"}
-//       </span>
-//     </div>
-//   );
-// }
-
-// export default CommunityCard;
-
 import React from "react";
 
 function CommunityCard({ community, onView }) {

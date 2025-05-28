@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from "react";
+import { useParams,useNavigate } from "react-router-dom";
 import PostCard from "./PostCard";
+import { dedupe } from "../utils/localStorageUtils";
+import { createGroupChat } from "../services/chatApi";
+
 
 function CommunityDetail({ communityId, onBack }) {
+  const navigate = useNavigate();
+  const  params = useParams();
+  const id = communityId || params.id || CommunityId;
   const [community, setCommunity] = useState(null);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -12,11 +19,27 @@ function CommunityDetail({ communityId, onBack }) {
   const [createError, setCreateError] = useState("");
   const [createLoading, setCreateLoading] = useState(false);
 
+  // ─── NEW: Favorite toggle state ───────────────────────────────────────────
+  const [isFavorited, setIsFavorited] = useState(false);
+
+  // ─── NEW: load favorite status on mount ─────────────────────────────────
+  useEffect(() => {
+    const favs = JSON.parse(localStorage.getItem("myFavorites") || "[]");
+    setIsFavorited(
+      favs.some(
+        (f) => f.id === communityId && f.type === "community"
+      )
+    );
+  }, [communityId]);
+  // ───────────────────────────────────────────────────────────────────────────
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         // 1) Fetch community
-        let response = await fetch(`https://empathaiv2-backend.onrender.com/communities/${communityId}`);
+        let response = await fetch(
+          `https://empathaiv2-backend.onrender.com/communities/${id}`
+        );
         if (!response.ok) {
           const errData = await response.json();
           throw new Error(errData.error || "Failed to fetch community");
@@ -24,8 +47,9 @@ function CommunityDetail({ communityId, onBack }) {
         const communityData = await response.json();
 
         // 2) Fetch posts for this community
-        //    If your endpoint is GET /api/posts?community_id=xxx or something else
-        response = await fetch(`https://empathaiv2-backend.onrender.com/posts/community/${communityId}`);
+        response = await fetch(
+          `https://empathaiv2-backend.onrender.com/posts/community/${id}`
+        );
         if (!response.ok) {
           const errData = await response.json();
           throw new Error(errData.error || "Failed to fetch community posts");
@@ -43,6 +67,96 @@ function CommunityDetail({ communityId, onBack }) {
 
     fetchData();
   }, [communityId]);
+
+  // ─── NEW: record “recently viewed” whenever community changes ───────────────
+  // useEffect(() => {
+  //   if (!community) return;
+  //   const key = "recentlyViewedCommunities";
+  //   const existing = JSON.parse(localStorage.getItem(key) || "[]");
+  //   // remove duplicates
+  //   const filtered = existing.filter((c) => c.id !== community.id);
+  //   // add newest at front, cap at 10
+  //   const updated = [
+  //     {
+  //       id: communityId,
+  //       name: community.name,
+  //       link: `/communities/${communityId}`,
+  //     },
+  //     ...filtered,
+  //   ].slice(0, 10);
+  //   localStorage.setItem(key, JSON.stringify(updated));
+  // }, [community]);
+
+  useEffect(() => {
+    if (!community) return;
+  
+    const key = "recentlyViewedCommunities";
+    const old = JSON.parse(localStorage.getItem(key) || "[]");
+    const filtered = old.filter(item => item.id !== communityId);
+    filtered.unshift({
+      id: communityId,
+      name: community.name,
+      link: `/communities/${communityId}`
+    });
+    const updated = filtered.slice(0, 10);
+    localStorage.setItem(key, JSON.stringify(updated));
+  }, [community]);
+
+  // ───────────────────────────────────────────────────────────────────────────
+
+  // ─── NEW: favorite toggle handler ─────────────────────────────────────────
+  // const toggleFavorite = () => {
+  //   const key = "myFavorites";
+  //   const favs = JSON.parse(localStorage.getItem(key) || "[]");
+  //   const exists = favs.find(
+  //     (f) => f.id === communityId && f.type === "community"
+  //   );
+
+  //   let updated;
+  //   if (exists) {
+  //     // remove
+  //     updated = favs.filter(
+  //       (f) => !(f.id === communityId && f.type === "community")
+  //     );
+  //     setIsFavorited(false);
+  //   } else {
+  //     // add
+  //     updated = [
+  //       ...favs,
+  //       {
+  //         id: id,
+  //         type: "community",
+  //         name: community.name,
+  //         link: `/communities/${id}`,
+  //       },
+  //     ];
+  //     setIsFavorited(true);
+  //   }
+  //   localStorage.setItem(key, JSON.stringify(updated));
+  // };
+
+  const toggleFavorite = () => {
+    const key  = "myFavorites";
+    const favs = JSON.parse(localStorage.getItem(key) || "[]");
+    const exists = favs.find(f => f.id === communityId && f.type === "community");
+  
+    let updated;
+    if (exists) {
+      updated = favs.filter(f => !(f.id === communityId && f.type === "community"));
+    } else {
+      updated = [ 
+        ...favs, 
+        { id: communityId, type: "community", name: community.name, link: `/communities/${communityId}` } 
+      ];
+    }
+  
+  // now dedupe by both `type` and `id` to strip any stray dupes:
+   updated = dedupe(updated, ["type","id"]);
+  
+    localStorage.setItem(key, JSON.stringify(updated));
+    setIsFavorited(!exists);
+  };
+  // ───────────────────────────────────────────────────────────────────────────
 
   const handleCreatePost = async (e) => {
     e.preventDefault();
@@ -85,7 +199,8 @@ function CommunityDetail({ communityId, onBack }) {
 
   if (loading) return <p className="text-gray-700">Loading community...</p>;
   if (error) return <p className="text-red-600">{error}</p>;
-  if (!community) return <p className="text-gray-500">Community not found.</p>;
+  if (!community)
+    return <p className="text-gray-500">Community not found.</p>;
 
   return (
     <div className="space-y-4">
@@ -94,12 +209,38 @@ function CommunityDetail({ communityId, onBack }) {
         <h2 className="text-2xl font-bold text-emerald-600">
           {community.name}
         </h2>
-        <button
-          onClick={onBack}
-          className="text-emerald-600 hover:underline"
+        <div className="flex items-center space-x-2">
+          <button
+            onClick={onBack}
+            className="text-emerald-600 hover:underline"
+          >
+            Back
+          </button>
+
+          <button
+          onClick={async () => {
+            try {
+              const chat = await createGroupChat(communityId);
+              navigate(`/chats/${chat._id}`);
+            } catch (err) {
+              console.error(err);
+              alert("Could not open community chat.");
+            }
+          }}
+          className="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1 rounded text-sm"
         >
-          Back
-        </button>
+          Open Community Chat
+       </button>
+
+          {/* ─── NEW: Favorite button ────────────────────────────── */}
+          <button
+            onClick={toggleFavorite}
+            className="text-emerald-600 hover:text-emerald-800"
+          >
+            {isFavorited ? "★ Unfavorite" : "☆ Add to Favorites"}
+          </button>
+          {/* ─────────────────────────────────────────────────────── */}
+        </div>
       </div>
 
       <div className="bg-white border border-gray-200 rounded-md p-4 shadow-sm">
