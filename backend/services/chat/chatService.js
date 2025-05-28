@@ -1,27 +1,51 @@
 import Chat from "../../models/Chat.js";
 import Message from "../../models/Message.js";
-
+import Community from "../../models/Community.js";
 /**
  * Create or retrieve a one-to-one chat or create a new group chat.
  * For one-to-one, if a chat already exists between the two participants, it returns that chat.
  */
+// export const createOrGetChat = async ({ participants, isGroup, groupId }) => {
+//   // For one-to-one chat, check if it already exists
+//   if (!isGroup && participants.length === 2) {
+//     const existingChat = await Chat.findOne({
+//       isGroup: false,
+//       participants: { $all: participants },
+//     });
+//     if (existingChat) return existingChat;
+//   }
+
+//   // Create new chat
+//   const newChat = await Chat.create({ participants, isGroup, groupId });
+
+//   // Initialize an empty Message document for the chat
+//   await Message.create({ chatId: newChat._id, messages: [] });
+
+//   return newChat;
+// };
+
 export const createOrGetChat = async ({ participants, isGroup, groupId }) => {
-  // For one-to-one chat, check if it already exists
+  let chat;
+
   if (!isGroup && participants.length === 2) {
-    const existingChat = await Chat.findOne({
-      isGroup: false,
-      participants: { $all: participants },
-    });
-    if (existingChat) return existingChat;
+    chat = await Chat.findOne({ isGroup: false, participants: { $all: participants } });
+    if (chat) {
+      // ensure a Message doc exists
+      let msgDoc = await Message.findOne({ chatId: chat._id });
+      if (!msgDoc) {
+        await Message.create({ chatId: chat._id, messages: [] });
+      }
+      return chat;
+    }
   }
 
-  // Create new chat
-  const newChat = await Chat.create({ participants, isGroup, groupId });
+  // create new chat
+  chat = await Chat.create({ participants, isGroup, groupId });
 
-  // Initialize an empty Message document for the chat
-  await Message.create({ chatId: newChat._id, messages: [] });
+  // **NEW**: bootstrap messages collection
+  await Message.create({ chatId: chat._id, messages: [] });
 
-  return newChat;
+  return chat;
 };
 
 /**
@@ -92,7 +116,7 @@ export const sendMessage = async ({ chatId, senderId, content, media, messageTyp
         },
       },
     },
-    { new: true }
+    { new: true ,upsert: true} // create it if it doesn’t already exist}
   );
 
   // Update the Chat's lastMessage and lastMessageAt fields
@@ -165,7 +189,10 @@ export const sendMessage = async ({ chatId, senderId, content, media, messageTyp
 
 export const getChatMessages = async (chatId) => {
   const messageDoc = await Message.findOne({ chatId });
-  if (!messageDoc) return null;
+  if (!messageDoc) {
+    // messageDoc = await Message.create({ chatId, messages: [] });
+    return null;
+  }
 
   // Convert to plain object immediately
   const enrichedDoc = messageDoc.toObject();
@@ -203,6 +230,45 @@ export const getChatMessages = async (chatId) => {
 
   return enrichedDoc;
 };
+
+export const createGroupChat = async (communityId, participantIds) => {
+  // 1) default participants if none
+  if (!participantIds) {
+    const community = await Community.findById(communityId).lean();
+    if (!community) throw new Error("Community not found");
+    participantIds = community.members;
+  }
+
+  // 2) lookup existing
+  let chat = await Chat.findOne({ isGroup: true, groupId: communityId });
+  if (chat) {
+    // ensure messages doc
+    let msgDoc = await Message.findOne({ chatId: chat._id });
+    if (!msgDoc) await Message.create({ chatId: chat._id, messages: [] });
+    return chat;
+  }
+
+  // 3) create new
+  chat = await Chat.create({
+    participants: participantIds,
+    isGroup: true,
+    groupId: communityId,
+    lastMessage: "",
+    lastMessageAt: Date.now(),
+  });
+
+  // **NEW**: bootstrap messages collection
+  await Message.create({ chatId: chat._id, messages: [] });
+
+  return chat;
+};
+
+
+export const getGroupChatsForCommunity = async (communityId) => {
+  return Chat.find({ isGroup: true, groupId: communityId })
+             .sort({ lastMessageAt: -1 })
+             .lean();
+}
 
 
 export async function patchMessageTranscript({ chatId, messageId, transcript }) {

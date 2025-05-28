@@ -54,8 +54,7 @@ class PostService{
         result.topics.sort((a, b) => b.score - a.score);
       
         // Set your minimum acceptable score threshold
-        const MIN_SCORE = 0.3;
-        if (result.topics[0].score < MIN_SCORE || result.topics[0].label === "Offensive Content" || result.topics[0].label === "Abuse & Harassment") {
+        if (result.topics[0].label === "Offensive Content" || result.topics[0].label === "Abuse & Harassment") {
           throw new Error("Your post has been removed by Team EmpathAI for its disturbing content.");
         }
       

@@ -31,6 +31,7 @@ import media from "./routes/media.js"
 import botRoutes from "./routes/botRoutes.js"
 import "./cron/botCron.js";
 import letterRoutes from "./routes/letterRoutes.js";
+import transcriptionRoutes from "./routes/transcriptionRoutes.js";
 
 dotenv.config({ path: "./.env" });
 
@@ -89,6 +90,7 @@ app.use("/users", userRoutes);
 app.use('/journals', journalRoutes);
 app.use("/bot", botRoutes);
 app.use("/letters", letterRoutes);
+app.use("/api", transcriptionRoutes);
 
 app.use((err, req, res, next) => {
   console.error("ERROR:", err.stack || err);

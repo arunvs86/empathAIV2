@@ -101,3 +101,26 @@ export const getMessages = async (req, res) => {
     return res.status(500).json({ error: "Error fetching messages." });
   }
 };
+
+export const createGroupChat = async(req, res) => {
+  try {
+    const { communityId, participantIds } = req.body;
+    const chat = await chatService.createGroupChat(communityId, participantIds);
+    return res.status(200).json(chat);
+  } catch (err) {
+    console.error("createGroupChat error:", err);
+    return res.status(400).json({ error: err.message });
+  }
+}
+
+// GET /api/chats/group/:communityId
+export const getGroupChatsForCommunity = async(req, res) => {
+  try {
+    const { communityId } = req.params;
+    const chats = await chatService.getGroupChatsForCommunity(communityId);
+    return res.json(chats);
+  } catch (err) {
+    console.error("getGroupChatsForCommunity error:", err);
+    return res.status(400).json({ error: err.message });
+  }
+}

@@ -13,7 +13,6 @@ const authMiddleware = async (req, res, next) => {
         }
 
         const decoded = jwt.verify(token.replace("Bearer ", ""), process.env.JWT_SECRET);
-        console.log(decoded.id)
         const user = await User.findByPk(decoded.id);
         if (!user) {
             return res.status(401).json({ error: "Invalid token. User not found." });
