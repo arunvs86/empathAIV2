@@ -45,7 +45,8 @@ class PostService{
           })
         });
         const result = await response.json();
-      
+        console.log(result)
+
         // If no topics or top score too low, discard post
         if (!result.topics || result.topics.length === 0) {
           throw new Error("Your post has been removed by Team EmpathAI for its disturbing content.");
@@ -54,9 +55,23 @@ class PostService{
         result.topics.sort((a, b) => b.score - a.score);
       
         // Set your minimum acceptable score threshold
-        if (result.topics[0].label === "Offensive Content" || result.topics[0].label === "Abuse & Harassment") {
-          throw new Error("Your post has been removed by Team EmpathAI for its disturbing content.");
-        }
+        console.log(result.topics)
+        // if (result.topics[0].label === "Offensive Content" || result.topics[0].label === "Abuse & Harassment") {
+        //   throw new Error("Your post has been removed by Team EmpathAI for its disturbing content.");
+        // }
+
+        const topThreeLabels = result.topics
+                                .slice(0, 3)                // take at most the first 3
+                                .map((t) => t.label);       // pull out their labels
+
+        const banned = ["Offensive Content", "Abuse & Harassment"];
+
+        // if any of the top-three is banned, reject
+        if (topThreeLabels.some((label) => banned.includes(label))) {
+            throw new Error(
+            "Your post has been removed by Team EmpathAI for its disturbing content."
+            );
+          }
       
         // Take top two labels
         const topTwoCategories = result.topics.slice(0, 2).map((t) => t.label);
@@ -73,7 +88,7 @@ class PostService{
       
         // Attach username if you need
         const postObj = newPost.toObject();
-        postObj.username = user.username;
+        postObj.username = user.username || "EmpathAIUser";
       
         return postObj;
 
