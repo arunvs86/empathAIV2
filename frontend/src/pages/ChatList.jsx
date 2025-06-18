@@ -2,11 +2,13 @@
 import React, { useEffect, useState } from "react";
 import { getUserChats } from "../services/chatApi";
 import ChatCard from "../components/ChatCard";
+import { useUnreadChats } from "../contexts/UnreadChatsContext";
 
 function ChatList() {
   const [chats, setChats] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const { unreadChats } = useUnreadChats();
 
   useEffect(() => {
     const fetchChats = async () => {
@@ -37,9 +39,13 @@ function ChatList() {
           Your Chats
         </h2>
         <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-          {chats.map((chat) => (
-            <ChatCard key={chat._id} chat={chat} />
-          ))}
+        {chats.map(chat => (
+          <ChatCard
+            key={chat._id}
+            chat={chat}
+            unread={!!unreadChats[chat._id]}
+          />
+        ))}
         </div>
       </div>
     </div>

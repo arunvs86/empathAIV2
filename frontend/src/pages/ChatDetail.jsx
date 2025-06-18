@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import socket from "../services/socket";
 import { getUserChats, getMessages, sendMessage } from "../services/chatApi";
 import VoiceRecorder from "../components/VoiceRecorder"
+import { useUnreadChats } from "../contexts/UnreadChatsContext";
 
 function ChatDetail() {
   const { chatId } = useParams();
@@ -23,7 +24,20 @@ function ChatDetail() {
   // No changes needed here: we'll patch them where we load/fetch.
   // ────────────────────────────────────────────────────────────────────────────
 
-  // Fetch enriched chat details...
+  const { setUnreadChats } = useUnreadChats();
+
+  // On mount or chatId change: remove from unread
+  useEffect(() => {
+    let stored = {};
+    try {
+      stored = JSON.parse(localStorage.getItem("unreadChats") || "{}");
+    } catch {}
+    if (stored[chatId]) {
+      const { [chatId]: _, ...rest } = stored;
+      setUnreadChats(rest);
+    }
+  }, [chatId, setUnreadChats]);
+  
   useEffect(() => {
     const fetchChatDetails = async () => {
       try {

@@ -9,7 +9,9 @@ function CommunityDetail({ communityId, onBack }) {
   const navigate = useNavigate();
   const  params = useParams();
   const id = communityId || params.id || CommunityId;
+  const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
   const [community, setCommunity] = useState(null);
+  const [pendingRequests, setPendingRequests] = useState([]);  
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -67,6 +69,33 @@ function CommunityDetail({ communityId, onBack }) {
 
     fetchData();
   }, [communityId]);
+
+  useEffect(() => {
+    const loadRequests = async () => {
+      // only for mods/creator
+      if (
+        !community ||
+        (community.createdBy !== currentUser.id &&
+         !community.moderators.includes(currentUser.id))
+      ) return;
+
+      try {
+        const token = localStorage.getItem("token");
+        const res = await fetch(
+          `https://empathaiv2-backend.onrender.com/communities/${community._id}/requests`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        if (!res.ok) throw new Error("Failed to load requests");
+        const data = await res.json();
+        console.log("Pending request:", data)
+        setPendingRequests(data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    loadRequests();
+  }, [community]);
 
   // ─── NEW: record “recently viewed” whenever community changes ───────────────
   // useEffect(() => {
@@ -197,6 +226,93 @@ function CommunityDetail({ communityId, onBack }) {
     }
   };
 
+  const handleRequest = async (userId, action) => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(
+        `https://empathaiv2-backend.onrender.com/communities/${community._id}/approve`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({ userId, action }) // action: "approve" or "reject"
+        }
+      );
+      if (!res.ok) throw new Error("Request failed");
+      // remove from local list
+      setPendingRequests((prev) => prev.filter((u) => u.id !== userId));
+      // if approved, also reflect in community.members
+      if (action === "approve") {
+        setCommunity((c) => ({
+          ...c,
+          members: [...c.members, userId]
+        }));
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Could not " + action + " request");
+    }
+  };
+
+  const handleJoin = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(
+        `https://empathaiv2-backend.onrender.com/communities/${community._id}/join`,
+        {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      if (!res.ok) throw new Error("Join failed");
+      setCommunity(c => ({ ...c, members: [...c.members, currentUser.id] }));
+    } catch (err) {
+      console.error(err);
+      alert(err.message);
+    }
+  };
+  
+  const handleRequestToJoin = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(
+        `https://empathaiv2-backend.onrender.com/communities/${community._id}/request`,
+        {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      if (!res.ok) throw new Error("Request failed");
+      alert("Join request sent");
+    } catch (err) {
+      console.error(err);
+      alert(err.message);
+    }
+  };
+  
+  const handleLeave = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(
+        `https://empathaiv2-backend.onrender.com/communities/${community._id}/leave`,
+        {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      if (!res.ok) throw new Error("Leave failed");
+      setCommunity(c => ({
+        ...c,
+        members: c.members.filter((id) => id !== currentUser.id)
+      }));
+    } catch (err) {
+      console.error(err);
+      alert(err.message);
+    }
+  };
+
   if (loading) return <p className="text-gray-700">Loading community...</p>;
   if (error) return <p className="text-red-600">{error}</p>;
   if (!community)
@@ -255,6 +371,69 @@ function CommunityDetail({ communityId, onBack }) {
           {community.type === "public" ? "Public" : "Private"}
         </span>
       </div>
+
+      {/* …inside your JSX, below the type badge… */}
+{!community.members.includes(currentUser.id) ? (
+  community.type === "public" ? (
+    <button
+      onClick={handleJoin}
+      className="px-3 py-1 bg-emerald-600 text-white rounded hover:bg-emerald-700 text-sm"
+    >
+      Join Community
+    </button>
+  ) : (
+    <button
+      onClick={handleRequestToJoin}
+      className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm"
+    >
+      Request to Join
+    </button>
+  )
+) : (
+  <button
+    onClick={handleLeave}
+    className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm"
+  >
+    Leave Community
+  </button>
+)}
+
+
+      {/* Pending join requests (mods/creator only) */}
+{pendingRequests.length > 0 && (
+  <div className="bg-yellow-50 border border-yellow-200 rounded-md p-4 mb-4">
+    <h3 className="font-semibold mb-2">Join Requests</h3>
+    <ul className="space-y-2">
+      {pendingRequests.map((u) => (
+        <li key={u.id} className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <img
+              src={u.profile_picture || "/assets/avatar.png"}
+              alt={u.username}
+              className="w-6 h-6 rounded-full"
+            />
+            <span>{u.username}</span>
+          </div>
+          <div className="space-x-2">
+            <button
+              onClick={() => handleRequest(u.id, "approve")}
+              className="px-2 py-1 bg-green-200 text-green-800 rounded"
+            >
+              Approve
+            </button>
+            <button
+              onClick={() => handleRequest(u.id, "reject")}
+              className="px-2 py-1 bg-red-200 text-red-800 rounded"
+            >
+              Reject
+            </button>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </div>
+)}
+
 
       {/* Create Post Form */}
       <div className="bg-white border border-gray-200 rounded-md p-4 shadow-sm">

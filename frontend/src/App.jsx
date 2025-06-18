@@ -9,10 +9,7 @@ import ChatList from "./pages/ChatList";
 import ProfileJournals from "./components/ProfileJournal";
 import MyProfile from "./pages/MyProfile";
 import ProfilePosts from "./pages/ProfilePosts";
-// (you’ll create the other 3 soon)
-// import ProfileCommunities from "./pages/ProfileCommunities";
-// import ProfileHabits from "./pages/ProfileHabits";
-// Child pages for inside HomeLayout
+
 import MainContent from "./components/MainContent";
 import CreatePost from "./components/CreatePost";
 import CommunityView from "./components/CommunityView";
@@ -24,6 +21,33 @@ import LetterToLovedOne from "./pages/Letter";
 import LetterView from "./components/LetterView";
 import LetterComposer from "./components/LetterComposer";
 import LettersPage from './pages/LettersPage';
+import UserDetail from './pages/UserDetail';
+import SentimentLiftDetail from "./pages/SentimentLiftDetail";
+// 
+// Dashboard
+//
+
+import DashboardLayout from './components/dashboard/DashboardLayout';
+import DashboardPage from './pages/DashboardPage';
+
+// // Detail pages (we'll build these in the next steps)
+ import UserSummaryDetail from './pages/UserSummaryDetail';
+ import RetentionDetail from './pages/RetentionDetail';
+ import SessionsDetail from './pages/SessionsDetail';
+ import ChatOverviewDetail from './pages/ChatOverviewDetail';
+ import SentimentShiftDetail from './pages/SentimentShiftDetail';
+ import MediaBreakdownDetail from './pages/MediaBreakdownDetail';
+ import TherapyFunnelDetail from './pages/TherapyFunnelDetail';
+ import LeadTimeDetail from './pages/LeadTimeDetail';
+ import TherapistRatingsDetail from './pages/TherapistRatingsDetail';
+ import JournalVolumeDetail from './pages/JournalVolumeDetail';
+ import JournalSentimentDetail from './pages/JournalSentimentDetail';
+ import JournalTagsDetail from './pages/JournalTagsDetail';
+ import CommunityPostsDetail from './pages/CommunityPostsDetail';
+ import ViolationsDetail from './pages/ViolationsDetail';
+ import AdminActionsDetail from './pages/AdminActionsDetail';
+// import MoodTrendsDetail from './pages/MoodTrendsDetail';
+// import MoodCorrelationDetail from './pages/MoodCorrelationDetail';
 
 function App() {
   return (
@@ -33,6 +57,38 @@ function App() {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/signup/:type" element={<Signup />} />
         <Route path="/" element={<HomeLayout />}>
+
+        {/* Dashboard parent route */}
+        <Route path="/dashboard" element={<DashboardLayout />}>
+          {/* Overview */}
+          <Route index element={<DashboardPage />} />
+
+          <Route path="users/summary"      element={<UserSummaryDetail />} /> 
+          <Route path="users/retention"    element={<RetentionDetail />} />
+          <Route path="users/sessions"     element={<SessionsDetail />} />
+          <Route path="users/detail/:userId" element={<UserDetail />} />
+
+          <Route path="chat/overview"       element={<ChatOverviewDetail />} />
+          <Route path="chat/sentiment-shift"element={<SentimentShiftDetail />} />
+          <Route path="chat/media-breakdown"element={<MediaBreakdownDetail />} />
+
+          <Route path="therapy/funnel"     element={<TherapyFunnelDetail />} />
+          <Route path="therapy/lead-time"  element={<LeadTimeDetail />} />
+          <Route path="therapy/ratings"    element={<TherapistRatingsDetail />} />
+
+          <Route path="journal/volume"     element={<JournalVolumeDetail />} />
+          <Route path="journal/sentiment"  element={<JournalSentimentDetail />} />
+          <Route path="journal/tags"       element={<JournalTagsDetail />} />
+
+          <Route path="community/posts"    element={<CommunityPostsDetail />} />
+          <Route path="moderation/violations" element={<ViolationsDetail />} />
+          <Route path="moderation/actions" element={<AdminActionsDetail />} />
+          <Route path="sentiment/lift" element={<SentimentLiftDetail />} />
+
+          {/*<Route path="mood/trends"        element={<MoodTrendsDetail />} />
+          <Route path="mood/correlation"   element={<MoodCorrelationDetail />} />   
+           */}
+        </Route>
 
         <Route
             path="faith"
@@ -67,6 +123,7 @@ function App() {
         <Route index element={<ProfilePosts />} />
         <Route path="posts" element={<ProfilePosts />} />
         <Route path="journals" element={<ProfileJournals />} />
+
         {/* <Route path="communities" element={<ProfileCommunities />} />
         <Route path="habits" element={<ProfileHabits />} /> */}
       </Route>
