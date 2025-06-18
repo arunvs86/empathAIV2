@@ -51,7 +51,6 @@ const User = sequelize.define("User", {
     allowNull: true,
   },
 
-  // 🌍 Location fields (structured)
   country: {
     type: DataTypes.STRING(100),
     allowNull: true,

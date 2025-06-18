@@ -17,5 +17,12 @@ router.post("/:id/leave", authMiddleware, communityController.leaveCommunity);
 router.delete("/:communityId/posts/:postId", authMiddleware, communityController.removePost);
 router.post("/:id/ban", authMiddleware, communityController.banUser);
 router.post("/:id/unban", authMiddleware, communityController.unbanUser);
+// GET /communities/:id/requests
+router.get(
+    "/:id/requests",
+    authMiddleware,
+    communityController.getPendingRequests
+  );
+  
 
 export default router;

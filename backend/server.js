@@ -32,6 +32,7 @@ import botRoutes from "./routes/botRoutes.js"
 import "./cron/botCron.js";
 import letterRoutes from "./routes/letterRoutes.js";
 import transcriptionRoutes from "./routes/transcriptionRoutes.js";
+import dashboard from "./routes/dashboard.js"
 
 dotenv.config({ path: "./.env" });
 
@@ -91,6 +92,8 @@ app.use('/journals', journalRoutes);
 app.use("/bot", botRoutes);
 app.use("/letters", letterRoutes);
 app.use("/api", transcriptionRoutes);
+app.use('/api/dashboard',dashboard);
+
 
 app.use((err, req, res, next) => {
   console.error("ERROR:", err.stack || err);
@@ -125,7 +128,8 @@ io.on("connection", (socket) => {
   socket.on("newMessage", (messageData) => {
     const { chatId, message } = messageData;
     // Emit to all sockets in this room
-    io.to(chatId).emit("newMessage", message);
+    // io.to(chatId).emit("newMessage", message);
+    io.to(chatId).emit("newMessage", { chatId, message });
   });
 
   // On disconnect

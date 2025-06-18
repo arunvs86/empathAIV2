@@ -157,6 +157,22 @@ class CommunityController {
             res.status(403).json({ error: error.message });
         }
     }
+
+ 
+async getPendingRequests(req, res) {
+    try {
+      const communityId = req.params.id;
+      const userId      = req.user.id;
+      // service will verify mod/creator permissions
+      const requests = await communityService.getPendingRequests(communityId, userId);
+      res.status(200).json(requests);
+    } catch (err) {
+      console.error("getPendingRequests error:", err);
+      const status = err.message.includes("Unauthorized") ? 403 : 404;
+      res.status(status).json({ error: err.message });
+    }
+  }
+  
 }
 
 export default new CommunityController();

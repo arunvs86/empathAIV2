@@ -1,4 +1,5 @@
 import Community from "../../models/Community.js";
+import User from "../../models/User.js";
 
 class CommunityService {
     /**
@@ -204,6 +205,38 @@ class CommunityService {
 
         return { message: "User unbanned successfully!" };
     }
+
+
+  async getPendingRequests(communityId, callerId) {
+    const community = await Community.findById(communityId);
+    if (!community) throw new Error("Community not found.");
+
+    // Only creator or any moderator can view requests
+    if (
+      community.createdBy !== callerId &&
+      !community.moderators.includes(callerId)
+    ) {
+      throw new Error("Unauthorized: only moderators or the creator can view requests.");
+    }
+
+    // If there are no pending requests, return empty array
+    if (!community.pending_requests?.length) return [];
+
+    // Fetch basic user info from your Postgres users table
+    const users = await User.findAll({
+      where: { id: community.pending_requests },
+      attributes: ["id", "username", "profile_picture"],
+    });
+
+    // Return as an array of { id, username, profile_picture }
+    return users.map((u) => ({
+      id: u.id,
+      username: u.username,
+      profile_picture: u.profile_picture,
+    }));
+  }
+
+  
 
     async getByUser(userId) {
         return Community

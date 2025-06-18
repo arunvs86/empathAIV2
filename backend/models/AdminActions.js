@@ -11,7 +11,7 @@ const AdminActions = sequelize.define("AdminActions", {
         type: DataTypes.UUID,
         allowNull: false,
         references: {
-            model: "Users", // Admin who performed the action
+            model: "Users", 
             key: "id",
         },
         onDelete: "CASCADE",
@@ -22,7 +22,7 @@ const AdminActions = sequelize.define("AdminActions", {
     },
     target_user_id: {
         type: DataTypes.UUID,
-        allowNull: true, // Can be null if the action is not user-related
+        allowNull: true, 
         references: {
             model: "Users",
             key: "id",
