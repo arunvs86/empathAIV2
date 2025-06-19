@@ -478,7 +478,7 @@ function TherapistDetail() {
   return (
     <div className="max-w-4xl mx-auto mt-6 px-4 relative">
       {/* Therapist Info */}
-      <div className="bg-white shadow-md rounded-md p-6 mb-6">
+      <div className="bg-white/50 shadow-md rounded-md p-6 mb-6">
         <h2 className="text-2xl font-bold mb-2 text-gray-800">
           {therapist.User?.username}
         </h2>
@@ -503,15 +503,15 @@ function TherapistDetail() {
       </div>
 
       {/* Availability */}
-      <div className="bg-white shadow-md rounded-md p-6">
+      <div className="bg-gray/50 shadow-md rounded-md p-6">
         <h3 className="text-xl font-semibold mb-4">Available Slots</h3>
         {dates.length === 0 && (
           <p className="text-gray-500">No available dates at the moment.</p>
         )}
         {dates.map((date) => (
           <div key={date} className="mb-6">
-            <div className="bg-gray-50 p-2 rounded-md mb-2">
-              <h4 className="font-medium">
+            <div className="bg-gray p-2 rounded-md mb-2">
+              <h4 className="bg-gray font-medium">
                 {new Date(date).toLocaleDateString()}
               </h4>
             </div>
@@ -519,7 +519,7 @@ function TherapistDetail() {
               slotsMap[date].map((time, idx) => {
                 const status = statusMap[date]?.[time] || "available";
                 return (
-                  <div key={idx} className="flex items-center justify-between bg-gray-50 border border-gray-200 rounded p-3 mb-2">
+                  <div key={idx} className="flex items-center justify-between bg-gray border border-gray-200 rounded p-3 mb-2">
                   <span>{time}</span>
                   <button
                     onClick={() => openQuestionnaire(date, time)}
@@ -549,7 +549,7 @@ function TherapistDetail() {
       {/* Questionnaire Modal */}
       {bookingCtx && (
         <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-20">
-          <div className="bg-white rounded-lg p-6 w-11/12 max-w-lg shadow-xl">
+          <div className="bg-gray-500 rounded-lg p-6 w-11/12 max-w-lg shadow-xl">
             <h3 className="text-xl font-semibold mb-4">Before We Book…</h3>
 
             {/* Question 1: Primary concern */}

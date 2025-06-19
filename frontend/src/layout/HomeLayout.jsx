@@ -141,21 +141,22 @@ export default function HomeLayout() {
   const isJournals = location.pathname.match(/^\/profile\/[^/]+\/journals/) != null
   const isLetters = location.pathname.startsWith("/letters");
 
-  // swap tagline
-  let tagline = isCommunities
-    ? "We shall surf the grief waves together!"
-    : "Healing begins with a single deep breath!";
+  let tagline = "Healing begins with a single deep breath!"
 
-tagline = isJournals
-? 'Converse with Your Inner Self, One Day at a Time'
-    : "Healing begins with a single deep breath!";
+  if(isCommunities)
+  {
+    tagline = "We shall surf the grief waves together!"
+  }
 
-tagline = isLetters ? 
-'Your Words, Their Memory—A Personal Letter for Healing' 
-    : "Healing begins with a single deep breath!";
+  if(isJournals)
+    {
+      tagline = "Converse with Your Inner Self, One Day at a Time"
+    }
 
-
-
+  if(isLetters)
+      {
+        tagline = "Your Words, Their Memory—A Personal Letter for Healing"
+      }
     
   return (
     <div className="relative w-full h-screen overflow-hidden font-sans text-white">
