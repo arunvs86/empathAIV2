@@ -150,7 +150,7 @@ export default function HomeLayout() {
 
   if(isJournals)
     {
-      tagline = "Converse with Your Inner Self, One Day at a Time"
+      tagline = "Your Inner Self, One Day at a Time"
     }
 
   if(isLetters)
