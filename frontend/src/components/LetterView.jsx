@@ -194,7 +194,7 @@ export default function LetterView() {
   return (
     <div ref={letterRef} className="relative min-h-screen flex items-center justify-center bg-gradient-to-b from-sky-100 to-white overflow-hidden px-4">
       {/* Clouds */}
-      <motion.img
+      {/* <motion.img
         src="/assets/images/cloud1.jpeg"
         alt="cloud"
         className="absolute top-0 left-0 w-64 opacity-50"
@@ -209,7 +209,7 @@ export default function LetterView() {
         initial={{ x: 50 }}
         animate={{ x: -50 }}
         transition={{ duration: 25, repeat: Infinity, repeatType: "mirror" }}
-      />
+      /> */}
 
       {/* Floating hearts */}
       <FloatingHeart left="30%" delay={0} />

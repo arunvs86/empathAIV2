@@ -121,7 +121,7 @@ export default function ChatCard({ chat, unread }) {
   return (
     <div
       onClick={() => navigate(`/chats/${chat._id}`)}
-      className={`relative bg-white border 
+      className={`relative bg-white/50 border 
         ${unread ? "border-emerald-500" : "border-gray-200"} 
         rounded-md p-4 shadow-sm cursor-pointer hover:shadow-md`}
     >
@@ -135,7 +135,7 @@ export default function ChatCard({ chat, unread }) {
           className="w-10 h-10 rounded-full object-cover"
         />
         <div>
-          <h3 className="text-sm font-bold">{username}</h3>
+          <h3 className="text-sm text-gray-600 font-bold">{username}</h3>
           <p className="text-xs text-gray-600 truncate max-w-xs">
             {chat.lastMessage}
           </p>

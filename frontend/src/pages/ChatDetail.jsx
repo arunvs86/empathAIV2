@@ -361,7 +361,7 @@ function ChatDetail() {
 
  
   return (
-    <div className="max-w-lg mx-auto mt-4 bg-white shadow-md rounded border border-gray-200 flex flex-col h-[70vh]">
+    <div className="bg-white/50 shadow-md rounded border border-gray-200 flex flex-col h-[70vh]">
       {/* Header */}
       <div className="px-3 py-2 border-b border-gray-300">
         <h2 className="text-sm font-bold">{headerTitle}</h2>
@@ -392,9 +392,9 @@ function ChatDetail() {
               }}
             /> */}
              <VoiceRecorder
-   chatId={chatId}
-   onUpload={handleVoiceUpload}
- />
+            chatId={chatId}
+              onUpload={handleVoiceUpload}
+                />
           </div>
           <button
             onClick={handleSend}

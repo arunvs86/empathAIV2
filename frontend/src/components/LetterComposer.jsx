@@ -74,20 +74,20 @@ export default function LetterComposer({ onLetterCreated }) {
   };
 
   return (
-    <div className="bg-white border border-gray-200 shadow-sm rounded-lg p-6 mb-8">
+    <div className="bg-white/50 border border-gray-200 shadow-sm rounded-lg p-6 mb-8">
       {/* <h3 className="text-2xl font-semibold mb-4 text-gray-900">Write a Letter</h3> */}
       <h2 className="
   text-center 
   text-3xl md:text-4xl 
   italic 
   font-light 
-  text-emerald-600 
+  text-white-600 
   mb-6 
   leading-snug 
   tracking-wide 
   drop-shadow-sm
 ">
-  Your Words, Their Memory—A Personal Letter for Healing
+  {/* Your Words, Their Memory—A Personal Letter for Healing */}
 </h2>      <form onSubmit={handleSubmit} className="space-y-4">
         <textarea
           rows={8}
