@@ -10,7 +10,7 @@ const CATEGORY_OPTIONS = [
 ];
 const MAX_WORDS = 500;
 
-export default function PostComposer({ onPostCreated }) {
+export default function PostComposer({communityId, onPostCreated }) {
   const [content, setContent] = useState('');
   const [categories, setCategories] = useState([]);
   const [mediaFiles, setMediaFiles] = useState([]);
@@ -55,7 +55,12 @@ export default function PostComposer({ onPostCreated }) {
 
       // 2) send post payload
       const token = localStorage.getItem('token');
-      const payload = { content, categories, media: mediaUrls };
+      const payload = {
+         content, 
+        categories, 
+        media: mediaUrls,
+        ...(communityId && { community_id: communityId })
+    };
       const res = await fetch('http://localhost:5003/posts', {
         method: 'POST',
         headers: {

@@ -4,6 +4,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import PostCard from "./PostCard";
 import { dedupe } from "../utils/localStorageUtils";
 import { createGroupChat } from "../services/chatApi";
+import PostComposer from "./PostComposer";
+
 
 export default function CommunityDetail({ communityId, onBack }) {
   const navigate = useNavigate();
@@ -310,7 +312,7 @@ export default function CommunityDetail({ communityId, onBack }) {
           Share in {community.name}
         </h2>
         {createError && <p className="text-red-400 mb-2">{createError}</p>}
-        <form onSubmit={handleCreatePost} className="space-y-4">
+        {/* <form onSubmit={handleCreatePost} className="space-y-4">
           <textarea
             value={newPostContent}
             onChange={e => setNewPostContent(e.target.value)}
@@ -325,7 +327,16 @@ export default function CommunityDetail({ communityId, onBack }) {
           >
             {createLoading ? "Posting…" : "Post"}
           </button>
-        </form>
+        </form> */}
+        <PostComposer
+    // when a new post is created, we want to stick it at the top
+    onPostCreated={newPost => {
+      setPosts(posts => [newPost, ...posts]);
+    }}
+    // you can optionally pass in the community ID so the composer
+    // posts to the right place:
+    communityId={id}
+  />
       </div>
 
       {/* Posts List */}
