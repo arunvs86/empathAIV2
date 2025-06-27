@@ -204,7 +204,7 @@ export default function HomeLayout() {
         </main>
 
         {/* Right Sidebar */}
-        <aside className="hidden lg:block w-52 p-4 relative pointer-events-auto z-30">
+        <aside className="hidden lg:block w-66 p-4 relative pointer-events-auto z-30">
           <RightSidebar />
         </aside>
       </div>

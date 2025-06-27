@@ -1,5 +1,5 @@
 // src/services/chatApi.js
-const BASE_URL = "https://empathaiv2-backend.onrender.com/chats";
+const BASE_URL = "http://localhost:5003/chats";
 
 export async function getMessages(chatId) {
   const token = localStorage.getItem("token");
@@ -27,7 +27,7 @@ export async function getUserChats() {
 // chatApi.js
 export async function sendMessage({ chatId, content, messageType,overrideSenderId }) {
   const token = localStorage.getItem("token");
-  const response = await fetch(`https://empathaiv2-backend.onrender.com/chats/message`, {
+  const response = await fetch(`http://localhost:5003/chats/message`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

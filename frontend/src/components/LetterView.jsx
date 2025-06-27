@@ -30,7 +30,7 @@
 // export default function LetterView() {
 //   const { id } = useParams();
 //   const [letter, setLetter] = useState(null);
-//   const api = "https://empathaiv2-backend.onrender.com";
+//   const api = "http://localhost:5003";
 
 //   useEffect(() => {
 //     (async () => {
@@ -150,7 +150,7 @@ export default function LetterView() {
   const { id } = useParams();
   const [letter, setLetter] = useState(null);
   const letterRef = useRef(null);
-  const api = "https://empathaiv2-backend.onrender.com";
+  const api = "http://localhost:5003";
 
   useEffect(() => {
     (async () => {

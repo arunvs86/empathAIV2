@@ -120,7 +120,7 @@
 //         additional_details: additionalDetails.trim(),
 //       };
 
-//       const res = await fetch("https://empathaiv2-backend.onrender.com/appointments", {
+//       const res = await fetch("http://localhost:5003/appointments", {
 //         method: "POST",
 //         headers: {
 //           "Content-Type": "application/json",
@@ -418,6 +418,63 @@ function TherapistDetail() {
     );
   };
  
+  // const submitBooking = async () => {
+  //   if (!bookingCtx) return;
+  //   if (!primaryConcern || !attendedBefore) {
+  //     alert("Please answer all required questions.");
+  //     return;
+  //   }
+
+  //   const { date, time } = bookingCtx;
+  //   const [start] = time.split(/–|-/).map((s) => s.trim());
+  //   const scheduledAt = new Date(`${date}T${start}:00`);
+  //   if (isNaN(scheduledAt)) {
+  //     alert("Invalid date/time.");
+  //     return;
+  //   }
+
+  //   try {
+  //     const user = JSON.parse(localStorage.getItem("user") || "{}");
+  //     const token = localStorage.getItem("token");
+  //     if (!user.id || !token) {
+  //       alert("Please log in to book.");
+  //       return;
+  //     }
+
+  //     const payload = {
+  //       user_id: user.id,
+  //       therapist_id: therapist.id,
+  //       scheduled_at: scheduledAt.toISOString(),
+  //       session_duration: 30,
+  //       session_type: "video",
+  //       // questionnaire answers:
+  //       primary_concern: primaryConcern,
+  //       attended_before: attendedBefore === "yes",
+  //       session_goals: sessionGoals,
+  //       additional_details: additionalDetails.trim(),
+  //     };
+
+  //     const res = await fetch("http://localhost:5003/appointments", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //       body: JSON.stringify(payload),
+  //     });
+  //     if (!res.ok) {
+  //       const err = await res.json();
+  //       throw new Error(err.error || "Failed to book appointment");
+  //     }
+  //     const appt = await res.json();
+  //     console.log(appt)
+  //     alert(appt.message);
+  //     closeQuestionnaire();
+  //   } catch (err) {
+  //     alert(err.message);
+  //   }
+  // };
+
   const submitBooking = async () => {
     if (!bookingCtx) return;
     if (!primaryConcern || !attendedBefore) {
@@ -434,6 +491,8 @@ function TherapistDetail() {
     }
 
     try {
+      setLoading(true);
+
       const user = JSON.parse(localStorage.getItem("user") || "{}");
       const token = localStorage.getItem("token");
       if (!user.id || !token) {
@@ -447,31 +506,36 @@ function TherapistDetail() {
         scheduled_at: scheduledAt.toISOString(),
         session_duration: 30,
         session_type: "video",
-        // questionnaire answers:
         primary_concern: primaryConcern,
         attended_before: attendedBefore === "yes",
         session_goals: sessionGoals,
         additional_details: additionalDetails.trim(),
       };
 
-      const res = await fetch("https://empathaiv2-backend.onrender.com/appointments", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(payload),
-      });
+      const res = await fetch(
+        "http://localhost:5003/appointments",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(payload),
+        }
+      );
+
       if (!res.ok) {
         const err = await res.json();
         throw new Error(err.error || "Failed to book appointment");
       }
+
       const appt = await res.json();
-      console.log(appt)
       alert(appt.message);
       closeQuestionnaire();
     } catch (err) {
       alert(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -630,16 +694,19 @@ function TherapistDetail() {
             <div className="flex justify-end space-x-3 mt-6">
               <button
                 onClick={closeQuestionnaire}
-                className="px-4 py-2 rounded border border-gray-300 hover:bg-gray-100"
+                className="px-4 py-2 rounded border border-gray-300 hover:bg-white/20"
               >
                 Cancel
               </button>
               <button
-                onClick={submitBooking}
-                className="px-4 py-2 rounded bg-emerald-600 text-white hover:bg-emerald-700"
-              >
-                Submit & Book
-              </button>
+      onClick={submitBooking}
+      disabled={loading}
+      className={`px-4 py-2 rounded bg-emerald-600 text-white hover:bg-emerald-700 transition ${
+        loading ? "opacity-50 cursor-not-allowed" : ""
+      }`}
+    >
+      {loading ? "Booking…" : "Submit & Book"}
+    </button>
             </div>
           </div>
         </div>

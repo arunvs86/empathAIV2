@@ -26,7 +26,7 @@ function CreatePost({ onPostCreated }) {
 //     }
 
 //     try {
-//       const response = await fetch("https://empathaiv2-backend.onrender.com/posts", {
+//       const response = await fetch("http://localhost:5003/posts", {
 //         method: "POST",
 //         headers: {
 //           "Content-Type": "application/json",
@@ -85,7 +85,7 @@ const handleSubmit = async (e) => {
   }
 
   try {
-    const response = await fetch("https://empathaiv2-backend.onrender.com/posts", {
+    const response = await fetch("http://localhost:5003/posts", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

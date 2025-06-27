@@ -119,7 +119,7 @@ function ChatDetail() {
     );
   
     try {
-      const res = await fetch("https://empathaiv2-backend.onrender.com/api/transcribe", {
+      const res = await fetch("http://localhost:5003/api/transcribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ audioUrl })
@@ -170,7 +170,7 @@ function ChatDetail() {
       if (otherParticipant?.id === botId) {
         try {
           // a) fetch transcript
-          const tRes = await fetch("https://empathaiv2-backend.onrender.com/api/transcribe", {
+          const tRes = await fetch("http://localhost:5003/api/transcribe", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ audioUrl: message.content }),

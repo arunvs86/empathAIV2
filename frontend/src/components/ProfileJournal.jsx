@@ -155,7 +155,7 @@
 //     setLoading(true);
 //     const token = localStorage.getItem('token');
 //     try {
-//       const res = await fetch(`https://empathaiv2-backend.onrender.com/journals?userId=${userId}`, {
+//       const res = await fetch(`http://localhost:5003/journals?userId=${userId}`, {
 //         headers: { Authorization: `Bearer ${token}` }
 //       });
 //       const data = await res.json();
@@ -171,8 +171,8 @@
 //     const token = localStorage.getItem('token');
 //     const method = editingEntry ? 'PUT' : 'POST';
 //     const url = editingEntry ?
-//       `https://empathaiv2-backend.onrender.com/journals/${editingEntry._id}` :
-//       'https://empathaiv2-backend.onrender.com/journals';
+//       `http://localhost:5003/journals/${editingEntry._id}` :
+//       'http://localhost:5003/journals';
 
 //     await fetch(url, {
 //       method,
@@ -192,7 +192,7 @@
 //   const handleDelete = async id => {
 //     if (!confirm('Delete this entry?')) return;
 //     const token = localStorage.getItem('token');
-//     await fetch(`https://empathaiv2-backend.onrender.com/journals/${id}`, {
+//     await fetch(`http://localhost:5003/journals/${id}`, {
 //       method: 'DELETE',
 //       headers: { Authorization: `Bearer ${token}` }
 //     });
@@ -425,7 +425,7 @@ export default function ProfileJournals() {
     setLoading(true);
     const token = localStorage.getItem('token');
     try {
-      const res = await fetch(`https://empathaiv2-backend.onrender.com/journals?userId=${userId}`, {
+      const res = await fetch(`http://localhost:5003/journals?userId=${userId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -441,8 +441,8 @@ export default function ProfileJournals() {
     const token = localStorage.getItem('token');
     const method = editingEntry ? 'PUT' : 'POST';
     const url = editingEntry ?
-      `https://empathaiv2-backend.onrender.com/journals/${editingEntry._id}` :
-      'https://empathaiv2-backend.onrender.com/journals';
+      `http://localhost:5003/journals/${editingEntry._id}` :
+      'http://localhost:5003/journals';
 
     await fetch(url, {
       method,
@@ -458,7 +458,7 @@ export default function ProfileJournals() {
   const handleDelete = async id => {
     if (!confirm('Delete this entry?')) return;
     const token = localStorage.getItem('token');
-    await fetch(`https://empathaiv2-backend.onrender.com/journals/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
+    await fetch(`http://localhost:5003/journals/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
     fetchEntries();
   };
 

@@ -23,6 +23,8 @@ import LetterComposer from "./components/LetterComposer";
 import LettersPage from './pages/LettersPage';
 import UserDetail from './pages/UserDetail';
 import SentimentLiftDetail from "./pages/SentimentLiftDetail";
+import CommunityList from "./components/CommunityList";
+import CreateCommunity from "./components/CreateCommunity";
 // 
 // Dashboard
 //
@@ -100,7 +102,10 @@ function App() {
           {/* Nested routes rendered in HomeLayout's <Outlet /> */}
           <Route index element={<MainContent />} />
           <Route path="create" element={<CreatePost />} />
-          <Route path="communities" element={<CommunityView />} />
+          {/* <Route path="communities" element={<CommunityView />} />
+          <Route path="communities/:id" element={<CommunityDetail />} /> */}
+          <Route path="communities" element={<CommunityList />} />
+          <Route path="communities/create" element={<CreateCommunity />} />
           <Route path="communities/:id" element={<CommunityDetail />} />
           {/* <Route path="messages" element={<Messages />} /> */}
           {/* Add other routes as needed */}

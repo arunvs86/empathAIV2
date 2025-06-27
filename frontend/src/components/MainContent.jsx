@@ -19,7 +19,7 @@
 //       try {
 //         const token = localStorage.getItem("token");
 //         if (!token) throw new Error("Please log in.");
-//         const res = await fetch("https://empathaiv2-backend.onrender.com/posts", {
+//         const res = await fetch("http://localhost:5003/posts", {
 //           headers: { Authorization: `Bearer ${token}` },
 //         });
 //         if (!res.ok) {
@@ -157,7 +157,7 @@ function MainContent() {
       try {
         const token = localStorage.getItem("token");
         if (!token) throw new Error("Please log in.");
-        const res = await fetch("https://empathaiv2-backend.onrender.com/posts", {
+        const res = await fetch("http://localhost:5003/posts", {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) {
@@ -235,7 +235,7 @@ function MainContent() {
           placeholder="Search by content or username…"
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
-          className="border rounded px-3 py-2 flex-1 max-w-xs focus:ring-emerald-400"
+          className="border rounded px-3 py-2 flex-1 max-w-xs text-bold focus:ring-emerald-400 text-white placeholder-white/70 bg-transparent"
         />
 
         <select
@@ -253,7 +253,7 @@ function MainContent() {
 
         <button
           onClick={toggleSort}
-          className="border rounded px-3 py-2 hover:bg-gray-100"
+          className="border rounded px-3 py-2"
         >
           Sort: {sortOrder === "desc" ? "Newest" : "Oldest"}
         </button>

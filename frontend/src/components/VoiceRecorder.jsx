@@ -28,7 +28,7 @@
 //     fd.append("chatId", chatId);
   
 //     const token = localStorage.getItem("token");
-//     const res = await fetch("https://empathaiv2-backend.onrender.com/media/voice", {
+//     const res = await fetch("http://localhost:5003/media/voice", {
 //       method: "POST",
 //       headers: { Authorization: `Bearer ${token}` },
 //       body: fd,
@@ -104,7 +104,7 @@ function VoiceRecorder({ chatId, onUpload }) {
     fd.append("chatId", chatId);
 
     const token = localStorage.getItem("token");
-    const res = await fetch("https://empathaiv2-backend.onrender.com/media/voice", {
+    const res = await fetch("http://localhost:5003/media/voice", {
       method: "POST",
       headers: { Authorization: `Bearer ${token}` },
       body: fd,

@@ -59,7 +59,7 @@
 //     e.preventDefault();
 
 //     try {
-//       const response = await fetch("https://empathaiv2-backend.onrender.com/auth/login", {
+//       const response = await fetch("http://localhost:5003/auth/login", {
 //         method: "POST",
 //         headers: {
 //           "Content-Type": "application/json",
@@ -268,7 +268,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("https://empathaiv2-backend.onrender.com/auth/login", {
+      const response = await fetch("http://localhost:5003/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -295,7 +295,7 @@ const Login = () => {
     e.preventDefault();
     setForgotLoading(true);
     try {
-      const response = await fetch("https://empathaiv2-backend.onrender.com/auth/forgot-password", {
+      const response = await fetch("http://localhost:5003/auth/forgot-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: forgotEmail }),
@@ -404,7 +404,7 @@ const Login = () => {
               />
             </div>
             <div className="flex items-center justify-between mb-6">
-              <label className="flex items-center text-gray-700">
+              {/* <label className="flex items-center text-gray-700">
                 <input
                   type="checkbox"
                   checked={rememberMe}
@@ -412,7 +412,7 @@ const Login = () => {
                   className="mr-2"
                 />
                 Remember me
-              </label>
+              </label> */}
               <button
                 type="button"
                 className="text-sm text-emerald-600 hover:underline"

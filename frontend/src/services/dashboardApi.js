@@ -1,6 +1,6 @@
 // frontend/src/services/dashboardApi.js
 
-const BASE_URL = "https://empathaiv2-backend.onrender.com/api/dashboard";
+const BASE_URL = "http://localhost:5003/api/dashboard";
 
 /** 1. User Adoption & Activity */
 export async function fetchUserSummary() {
@@ -32,7 +32,7 @@ export async function fetchAllUsers() {
 
   
 export async function fetchUserDetail(userId) {
-    const res = await fetch(`https://empathaiv2-backend.onrender.com/api/dashboard/users/detail/${userId}`);
+    const res = await fetch(`http://localhost:5003/api/dashboard/users/detail/${userId}`);
     if (!res.ok) throw new Error(`API Error (${res.status}): ${await res.text()}`);
     return res.json();
   }

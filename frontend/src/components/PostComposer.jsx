@@ -33,7 +33,7 @@ export default function PostComposer({ onPostCreated }) {
     const token = localStorage.getItem('token');
     const form = new FormData();
     mediaFiles.forEach(f => form.append('media', f));
-    const res = await fetch('https://empathaiv2-backend.onrender.com/media/upload', {
+    const res = await fetch('http://localhost:5003/media/upload', {
       method: 'POST',
       headers: { Authorization: `Bearer ${token}` },
       body: form,
@@ -56,7 +56,7 @@ export default function PostComposer({ onPostCreated }) {
       // 2) send post payload
       const token = localStorage.getItem('token');
       const payload = { content, categories, media: mediaUrls };
-      const res = await fetch('https://empathaiv2-backend.onrender.com/posts', {
+      const res = await fetch('http://localhost:5003/posts', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -93,135 +93,73 @@ export default function PostComposer({ onPostCreated }) {
     }
   };
 
-  // return (
-  //   <div className="bg-white border border-gray-200 shadow-sm rounded-lg p-6 mb-8">
-  //     <h3 className="text-2xl font-semibold mb-4 text-gray-900">Create a New Post</h3>
-  //     <form onSubmit={handleSubmit} className="space-y-4">
-  //       <textarea
-  //         rows={4}
-  //         placeholder="What's on your mind?"
-  //         value={content}
-  //         onChange={(e) => setContent(e.target.value)}
-  //         className="w-full border border-gray-300 rounded-lg p-4 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-300"
-  //         style={{ resize: 'vertical' }}
-  //       />
-
-  //       <CreatableSelect
-  //         isMulti
-  //         options={CATEGORY_OPTIONS}
-  //         value={CATEGORY_OPTIONS.filter(o => categories.includes(o.value))}
-  //         onChange={(sel) => setCategories(sel ? sel.map(s => s.value) : [])}
-  //         className="react-select-container"
-  //         classNamePrefix="react-select"
-  //         placeholder="Select or add categories..."
-  //       />
-
-  //       {/* media controls */}
-  //       <div className="flex space-x-6 text-gray-600">
-  //         <button
-  //           type="button"
-  //           onClick={() => fileInputRef.current.click()}
-  //           className="flex items-center space-x-1 hover:text-gray-900"
-  //         >
-  //           <ImageIcon className="w-5 h-5" />
-  //           <span className="text-sm">Media</span>
-  //         </button>
-  //       </div>
-  //       <input
-  //         type="file"
-  //         multiple
-  //         accept="image/*,video/*,audio/*"
-  //         ref={fileInputRef}
-  //         className="hidden"
-  //         onChange={handleFileChange}
-  //       />
-
-  //       {/* previews */}
-  //       {mediaFiles.length > 0 && (
-  //         <div className="grid grid-cols-4 gap-2 mt-4">
-  //           {mediaFiles.map((file, i) => (
-  //             <div key={i} className="relative rounded overflow-hidden">
-  //               {file.type.startsWith('image/') && (
-  //                 <img
-  //                   src={URL.createObjectURL(file)}
-  //                   alt={file.name}
-  //                   className="h-24 w-full object-cover rounded"
-  //                 />
-  //               )}
-  //               {file.type.startsWith('video/') && (
-  //                 <video
-  //                   src={URL.createObjectURL(file)}
-  //                   className="h-24 w-full rounded"
-  //                   muted
-  //                 />
-  //               )}
-  //               {file.type.startsWith('audio/') && (
-  //                 <div className="h-24 w-full bg-gray-100 flex items-center justify-center text-xs text-gray-600">
-  //                   {file.name}
-  //                 </div>
-  //               )}
-  //               <button
-  //                 type="button"
-  //                 onClick={() => setMediaFiles(prev => prev.filter((_, j) => j !== i))}
-  //                 className="absolute top-1 right-1 bg-white rounded-full p-1 text-red-600 hover:text-red-800 focus:outline-none"
-  //               >
-  //                 ✕
-  //               </button>
-  //             </div>
-  //           ))}
-  //         </div>
-  //       )}
-
-  //       <div className="flex items-center justify-between">
-  //         <span className={`text-sm ${remaining < 0 ? 'text-red-600' : 'text-gray-600'}`}>
-  //           {remaining} words remaining
-  //         </span>
-  //         <button
-  //           type="submit"
-  //           disabled={submitting || !content.trim() || remaining < 0}
-  //           className="bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 w-32 text-white font-semibold py-2 rounded-full focus:outline-none focus:ring-2 focus:ring-emerald-400 transition"
-  //         >
-  //           {submitting ? 'Posting...' : 'Post'}
-  //         </button>
-  //       </div>
-  //     </form>
-  //   </div>
-  // );
-
   return (
     <div className="bg-white/20 backdrop-blur-lg rounded-2xl shadow-lg p-6 mb-8">
       <form onSubmit={handleSubmit} className="space-y-4">
         <textarea
           rows={4}
-          placeholder="What's on your mind?"
+          placeholder="Type here and share your toughts 💭 Someone's listening. 🤗"
           value={content}
           onChange={e => setContent(e.target.value)}
-          className="w-full bg-white/30 placeholder-white/70 rounded-lg p-4 focus:outline-none focus:ring-2 focus:ring-white/50 text-white"
+          className="w-full bg-white/30 placeholder-white/90 rounded-lg p-4 focus:outline-none focus:ring-2 focus:ring-white/50 text-white"
         />
 
-        <CreatableSelect
-          isMulti
-          options={CATEGORY_OPTIONS}
-          value={CATEGORY_OPTIONS.filter(o => categories.includes(o.value))}
-          onChange={sel => setCategories(sel ? sel.map(s => s.value) : [])}
-          className="react-select-container"
-          classNamePrefix="react-select"
-          placeholder="Select or add categories..."
-          styles={{
-            control: provided => ({
-              ...provided,
-              background: "rgba(255,255,255,0.3)",
-              color: "white",
-            }),
-            multiValue: provided => ({
-              ...provided,
-              background: "rgba(255,255,255,0.3)",
-              color: "white",
-            }),
-            input: provided => ({ ...provided, color: "white" }),
-            placeholder: provided => ({ ...provided, color: "rgba(255,255,255,0.7)" }),
-          }}
-        />
+
+<CreatableSelect
+  isMulti
+  options={CATEGORY_OPTIONS}
+  value={CATEGORY_OPTIONS.filter(o => categories.includes(o.value))}
+  onChange={sel => setCategories(sel ? sel.map(s => s.value) : [])}
+  className="react-select-container text-white placeholder-white"
+  classNamePrefix="react-select"
+  placeholder="Select or add categories..."
+  styles={{
+    control: provided => ({
+      ...provided,
+      background: "rgba(255,255,255,0.3)",
+      borderColor: "rgba(255,255,255,0.5)",
+      boxShadow: "none",
+      "&:hover": { borderColor: "rgba(255,255,255,0.7)" },
+    }),
+    singleValue: provided => ({
+      ...provided,
+      color: "white",
+    }),
+    multiValue: provided => ({
+      ...provided,
+      background: "rgba(120, 120, 120, 0.3)",
+    }),
+    multiValueLabel: provided => ({
+      ...provided,
+      color: "white",
+    }),
+    input: provided => ({
+      ...provided,
+      color: "white",
+    }),
+    placeholder: provided => ({
+      ...provided,
+      color: "rgba(255,255,255,0.7)",
+    }),
+    option: (provided, { isFocused, isSelected }) => ({
+      ...provided,
+      background: isFocused
+        ? "rgba(230,230,230,0.8)"
+        : isSelected
+        ? "rgba(200,200,200,0.8)"
+        : "white",
+      color: "#333",
+    }),
+    menu: provided => ({
+      ...provided,
+      background: "white",
+      boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+      borderRadius: "0.5rem",
+      zIndex: 9999,
+    }),
+  }}
+/>
+
 
         <div className="flex items-center gap-6">
           <button
