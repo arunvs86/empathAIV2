@@ -12,5 +12,6 @@ router.get("/:id/posts",   authMiddleware, UserController.getUserPosts);
 router.get("/:id/journals",authMiddleware, UserController.getUserJournals);
 router.get("/:id/communities", authMiddleware, UserController.getUserCommunities);
 // router.get("/:id/habits",  authMiddleware, UserController.getUserHabits);
+router.put("/:userId",authMiddleware, UserController.updateProfile);
 
 export default router;

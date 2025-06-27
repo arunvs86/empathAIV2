@@ -144,7 +144,6 @@ const TEMPLATES = {
   "🎶 Listen to a spiritual hymn, chant or mantra that honors life and the journey through loss.",
   "🤝 Join a prayer circle or support group to share memories and receive communal comfort.",
   "🌸 Create a small altar with flowers and photos, offering beauty and remembrance to departed souls.",
-  "✍️ Write a letter to your loved one, then ceremonially burn or bury it as a release ritual.",
   "🗣️ Recite a short prayer of healing and hope at sunrise or sunset to mark a new beginning.",
   "🛐 Place an offering of food, water or incense at an altar, symbolizing nurture for the spirit.",
   "🖼️ Light incense or a fragrant stick, using the rising smoke as a prayer carrier to the divine.",

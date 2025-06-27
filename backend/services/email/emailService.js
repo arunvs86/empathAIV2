@@ -28,7 +28,7 @@ class EmailService {
             { expiresIn: "1h" }
         );
 
-        const verificationLink = `https://empathaiv2-backend.onrender.com/auth/verify-email?token=${token}`;
+        const verificationLink = `http://localhost:5003/auth/verify-email?token=${token}`;
 
         const mailOptions = {
             from: process.env.EMAIL_FROM,

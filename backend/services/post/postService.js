@@ -134,7 +134,7 @@ class PostService{
       // 3. Fetch user details from your REST API endpoint
       if (userIds.length > 0) {
         const userResponse = await fetch(
-          `https://empathaiv2-backend.onrender.com/users?ids=${userIds.join(",")}`
+          `http://localhost:5003/users?ids=${userIds.join(",")}`
         );
         if (!userResponse.ok) {
           console.log("Error in userid fetch")
@@ -206,7 +206,7 @@ class PostService{
       // 2. Fetch user details if we have any user IDs
       if (userIds.length > 0) {
         const userResponse = await fetch(
-          `https://empathaiv2-backend.onrender.com/users?ids=${userIds.join(",")}`
+          `http://localhost:5003/users?ids=${userIds.join(",")}`
         );
         if (!userResponse.ok) {
           console.log("Error in 2")
@@ -338,7 +338,7 @@ class PostService{
       
         // 3. Fetch user details via a REST API endpoint that returns [{ id, username, profile_picture }]
         const userResponse = await fetch(
-          `https://empathaiv2-backend.onrender.com/users?ids=${userIds.join(",")}`
+          `http://localhost:5003/users?ids=${userIds.join(",")}`
         );
         if (!userResponse.ok) {
           console.log("Error in 3")
@@ -439,7 +439,7 @@ class PostService{
       let userMap = {};
       if (userIds.size) {
         const resp = await fetch(
-          `https://empathaiv2-backend.onrender.com/users?ids=${[...userIds].join(",")}`
+          `http://localhost:5003/users?ids=${[...userIds].join(",")}`
         );
         const users = await resp.json();
         users.forEach((u) => {

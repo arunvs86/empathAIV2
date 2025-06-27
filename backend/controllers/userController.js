@@ -98,6 +98,48 @@ class UserController {
     }
   }
 
+  async updateProfile(req, res) {
+    console.log("updation req user", req.user);
+    console.log("updation req body", req.body);
+  
+    // get the real user ID from the auth middleware
+    const id = req.user.id;
+    console.log("id:", id);
+  
+    const {
+      username, bio, profile_picture, dob, gender,
+      country, city, faith_support,
+      experience_years, license_number,
+      languages_spoken, session_duration, appointment_types
+    } = req.body;
+  
+    try {
+      // update the base User table
+      await User.update(
+        { username, bio, profile_picture, dob, gender, country, city, faith_support },
+        { where: { id } }
+      );
+  
+      // if a therapist, also update the Therapist table
+      if (req.user.role === "therapist") {
+        await Therapist.update(
+          { experience_years, license_number, languages_spoken, session_duration, appointment_types },
+          { where: { user_id: id } }
+        );
+      }
+  
+      // now fetch the full, updated record
+      const updatedUser = await User.findByPk(id, {
+        include: req.user.role === "therapist" ? [Therapist] : []
+      });
+  
+      console.log("updatedUser", updatedUser);
+      res.json({ user: updatedUser });
+    } catch (err) {
+      res.status(400).json({ error: err.message });
+    }
+  }
+
   // GET /users/:id/habits
   // async getUserHabits(req, res) {
   //   try {

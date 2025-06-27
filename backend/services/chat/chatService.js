@@ -70,7 +70,7 @@ export const getUserChats = async (userId) => {
   // e.g., GET /users?ids=uuid1,uuid2,uuid3
   // Adjust the URL or query param as needed
   const userRes = await fetch(
-    `https://empathaiv2-backend.onrender.com/users?ids=${userIdsArray.join(",")}`
+    `http://localhost:5003/users?ids=${userIdsArray.join(",")}`
   );
   if (!userRes.ok) {
     throw new Error("Failed to fetch user details from PostgreSQL");
@@ -153,7 +153,7 @@ export const sendMessage = async ({ chatId, senderId, content, media, messageTyp
 
 //   // Fetch user details from PostgreSQL
 //   const userRes = await fetch(
-//     `https://empathaiv2-backend.onrender.com/users?ids=${senderIdsArray.join(",")}`
+//     `http://localhost:5003/users?ids=${senderIdsArray.join(",")}`
 //   );
 //   if (!userRes.ok) {
 //     throw new Error("Failed to fetch user details for messages");
@@ -209,7 +209,7 @@ export const getChatMessages = async (chatId) => {
 
   // Fetch user details only if we have senders
   const userRes = await fetch(
-    `https://empathaiv2-backend.onrender.com/users?ids=${senderIdsArray.join(",")}`
+    `http://localhost:5003/users?ids=${senderIdsArray.join(",")}`
   );
   if (!userRes.ok) {
     throw new Error("Failed to fetch user details for messages");
