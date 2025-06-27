@@ -39,7 +39,7 @@ export default function CommunityDetail({ communityId, onBack }) {
       try {
         // 1) Fetch community
         let response = await fetch(
-          `http://localhost:5003/communities/${id}`
+          `https://empathaiv2-backend.onrender.com/communities/${id}`
         );
         if (!response.ok) {
           const errData = await response.json();
@@ -49,7 +49,7 @@ export default function CommunityDetail({ communityId, onBack }) {
 
         // 2) Fetch posts
         response = await fetch(
-          `http://localhost:5003/posts/community/${id}`
+          `https://empathaiv2-backend.onrender.com/posts/community/${id}`
         );
         if (!response.ok) {
           const errData = await response.json();
@@ -79,7 +79,7 @@ export default function CommunityDetail({ communityId, onBack }) {
       try {
         const token = localStorage.getItem("token");
         const res = await fetch(
-          `http://localhost:5003/communities/${community._id}/requests`,
+          `https://empathaiv2-backend.onrender.com/communities/${community._id}/requests`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         if (!res.ok) throw new Error("Failed to load requests");
@@ -140,7 +140,7 @@ export default function CommunityDetail({ communityId, onBack }) {
 
     try {
       const response = await fetch(
-        "http://localhost:5003/posts",
+        "https://empathaiv2-backend.onrender.com/posts",
         {
           method: "POST",
           headers: {
@@ -172,7 +172,7 @@ export default function CommunityDetail({ communityId, onBack }) {
     try {
       const token = localStorage.getItem("token");
       const res = await fetch(
-        `http://localhost:5003/communities/${community._id}/join`,
+        `https://empathaiv2-backend.onrender.com/communities/${community._id}/join`,
         { method: "POST", headers: { Authorization: `Bearer ${token}` } }
       );
       if (!res.ok) throw new Error("Join failed");
@@ -186,7 +186,7 @@ export default function CommunityDetail({ communityId, onBack }) {
     try {
       const token = localStorage.getItem("token");
       const res = await fetch(
-        `http://localhost:5003/communities/${community._id}/request`,
+        `https://empathaiv2-backend.onrender.com/communities/${community._id}/request`,
         { method: "POST", headers: { Authorization: `Bearer ${token}` } }
       );
       if (!res.ok) throw new Error("Request failed");
@@ -200,7 +200,7 @@ export default function CommunityDetail({ communityId, onBack }) {
     try {
       const token = localStorage.getItem("token");
       const res = await fetch(
-        `http://localhost:5003/communities/${community._id}/leave`,
+        `https://empathaiv2-backend.onrender.com/communities/${community._id}/leave`,
         { method: "POST", headers: { Authorization: `Bearer ${token}` } }
       );
       if (!res.ok) throw new Error("Leave failed");

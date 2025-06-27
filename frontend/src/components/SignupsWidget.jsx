@@ -28,7 +28,7 @@ export default function SignupsWidget() {
   const token = localStorage.getItem("token");
 
   useEffect(() => {
-    fetch(`http://localhost:5003/admin/metrics/signups?days=30&minCount=5`, {
+    fetch(`https://empathaiv2-backend.onrender.com/admin/metrics/signups?days=30&minCount=5`, {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(r => r.json())
@@ -43,7 +43,7 @@ export default function SignupsWidget() {
   const openDrill = (day) => {
     setDrawerDate(day);
     setDrillLoading(true);
-    fetch(`http://localhost:5003/admin/metrics/signups/drill?date=${day}`, {
+    fetch(`https://empathaiv2-backend.onrender.com/admin/metrics/signups/drill?date=${day}`, {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(r => r.json())

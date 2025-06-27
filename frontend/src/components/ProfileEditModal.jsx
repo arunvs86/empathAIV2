@@ -56,7 +56,7 @@ export default function ProfileEditModal({ userId, onClose, onSaved }) {
 
       console.log('payload', payload)
       const res = await fetch(
-        `http://localhost:5003/users/${userId}`,
+        `https://empathaiv2-backend.onrender.com/users/${userId}`,
         {
           method: "PUT",
           headers: {

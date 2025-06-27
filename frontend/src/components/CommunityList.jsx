@@ -16,7 +16,7 @@ export default function CommunityList({ onCreateCommunity, onSelectCommunity }) 
   useEffect(() => {
     (async () => {
       try {
-        const res = await fetch("http://localhost:5003/communities");
+        const res = await fetch("https://empathaiv2-backend.onrender.com/communities");
         if (!res.ok) {
           const body = await res.json();
           throw new Error(body.error || "Failed to fetch");

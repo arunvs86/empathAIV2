@@ -33,7 +33,7 @@ export default function PostComposer({communityId, onPostCreated }) {
     const token = localStorage.getItem('token');
     const form = new FormData();
     mediaFiles.forEach(f => form.append('media', f));
-    const res = await fetch('http://localhost:5003/media/upload', {
+    const res = await fetch('https://empathaiv2-backend.onrender.com/media/upload', {
       method: 'POST',
       headers: { Authorization: `Bearer ${token}` },
       body: form,
@@ -61,7 +61,7 @@ export default function PostComposer({communityId, onPostCreated }) {
         media: mediaUrls,
         ...(communityId && { community_id: communityId })
     };
-      const res = await fetch('http://localhost:5003/posts', {
+      const res = await fetch('https://empathaiv2-backend.onrender.com/posts', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

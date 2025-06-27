@@ -144,7 +144,7 @@ function TherapistAvailabilityForm() {
             selected_time_slots: { [date]: [slot] },
           };
 
-          const res = await fetch("http://localhost:5003/therapists", {
+          const res = await fetch("https://empathaiv2-backend.onrender.com/therapists", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",

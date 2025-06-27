@@ -35,7 +35,7 @@ function PostCard({ post, onPostUpdated, onPostDeleted }) {
     setError("");
     const token = localStorage.getItem("token");
     try {
-      const response = await fetch(`http://localhost:5003/posts/${post._id}`, {
+      const response = await fetch(`https://empathaiv2-backend.onrender.com/posts/${post._id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -67,7 +67,7 @@ function PostCard({ post, onPostUpdated, onPostDeleted }) {
     setError("");
     const token = localStorage.getItem("token");
     try {
-      const response = await fetch(`http://localhost:5003/posts/${post._id}`, {
+      const response = await fetch(`https://empathaiv2-backend.onrender.com/posts/${post._id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -99,7 +99,7 @@ function PostCard({ post, onPostUpdated, onPostDeleted }) {
     setError("");
     try {
       const response = await fetch(
-        `http://localhost:5003/posts/${post._id}/comments`
+        `https://empathaiv2-backend.onrender.com/posts/${post._id}/comments`
       );
       if (!response.ok) {
         const data = await response.json();
@@ -125,7 +125,7 @@ function PostCard({ post, onPostUpdated, onPostDeleted }) {
     }
     try {
       const response = await fetch(
-        `http://localhost:5003/posts/${post._id}/comment`,
+        `https://empathaiv2-backend.onrender.com/posts/${post._id}/comment`,
         {
           method: "POST",
           headers: {

@@ -19,7 +19,7 @@
 //       try {
 //         const token = localStorage.getItem("token");
 //         if (!token) throw new Error("Please log in.");
-//         const res = await fetch("http://localhost:5003/posts", {
+//         const res = await fetch("https://empathaiv2-backend.onrender.com/posts", {
 //           headers: { Authorization: `Bearer ${token}` },
 //         });
 //         if (!res.ok) {
@@ -157,7 +157,7 @@ function MainContent() {
       try {
         const token = localStorage.getItem("token");
         if (!token) throw new Error("Please log in.");
-        const res = await fetch("http://localhost:5003/posts", {
+        const res = await fetch("https://empathaiv2-backend.onrender.com/posts", {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) {

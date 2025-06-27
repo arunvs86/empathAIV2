@@ -5,7 +5,7 @@ import LetterComposer from '../components/LetterComposer';
 export default function LettersPage() {
   const [letters, setLetters] = useState([]);
   const [loading, setLoading] = useState(true);
-  const api = "http://localhost:5003";
+  const api = "https://empathaiv2-backend.onrender.com";
 
   // Fetch your user’s letters
   useEffect(() => {

@@ -120,7 +120,7 @@
 //         additional_details: additionalDetails.trim(),
 //       };
 
-//       const res = await fetch("http://localhost:5003/appointments", {
+//       const res = await fetch("https://empathaiv2-backend.onrender.com/appointments", {
 //         method: "POST",
 //         headers: {
 //           "Content-Type": "application/json",
@@ -454,7 +454,7 @@ function TherapistDetail() {
   //       additional_details: additionalDetails.trim(),
   //     };
 
-  //     const res = await fetch("http://localhost:5003/appointments", {
+  //     const res = await fetch("https://empathaiv2-backend.onrender.com/appointments", {
   //       method: "POST",
   //       headers: {
   //         "Content-Type": "application/json",
@@ -513,7 +513,7 @@ function TherapistDetail() {
       };
 
       const res = await fetch(
-        "http://localhost:5003/appointments",
+        "https://empathaiv2-backend.onrender.com/appointments",
         {
           method: "POST",
           headers: {

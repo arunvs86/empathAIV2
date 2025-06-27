@@ -15,9 +15,9 @@
 //     async function fetchStats() {
 //       try {
 //         const [pRes, jRes, cRes/*, hRes*/] = await Promise.all([
-//           fetch(`http://localhost:5003/posts/user/${userId}`, { headers:{Authorization:`Bearer ${token}`}}),
-//           fetch(`http://localhost:5003/journals?userId=${userId}`, { headers:{Authorization:`Bearer ${token}`}}),
-//           fetch(`http://localhost:5003/users/${userId}/communities`, { headers:{Authorization:`Bearer ${token}`}}),
+//           fetch(`https://empathaiv2-backend.onrender.com/posts/user/${userId}`, { headers:{Authorization:`Bearer ${token}`}}),
+//           fetch(`https://empathaiv2-backend.onrender.com/journals?userId=${userId}`, { headers:{Authorization:`Bearer ${token}`}}),
+//           fetch(`https://empathaiv2-backend.onrender.com/users/${userId}/communities`, { headers:{Authorization:`Bearer ${token}`}}),
 //           // fetch habits when ready
 //         ]);
 //         const [posts, journals, communities/*, habits*/] = await Promise.all([
@@ -98,9 +98,9 @@ export default function MyProfile() {
     async function fetchStats() {
       try {
         const [pRes, jRes, cRes] = await Promise.all([
-          fetch(`http://localhost:5003/posts/user/${userId}`, { headers: { Authorization: `Bearer ${token}` } }),
-          fetch(`http://localhost:5003/journals?userId=${userId}`, { headers: { Authorization: `Bearer ${token}` } }),
-          fetch(`http://localhost:5003/users/${userId}/communities`, { headers: { Authorization: `Bearer ${token}` } }),
+          fetch(`https://empathaiv2-backend.onrender.com/posts/user/${userId}`, { headers: { Authorization: `Bearer ${token}` } }),
+          fetch(`https://empathaiv2-backend.onrender.com/journals?userId=${userId}`, { headers: { Authorization: `Bearer ${token}` } }),
+          fetch(`https://empathaiv2-backend.onrender.com/users/${userId}/communities`, { headers: { Authorization: `Bearer ${token}` } }),
         ]);
         const [posts, journals, communities] = await Promise.all([pRes.json(), jRes.json(), cRes.json()]);
 

@@ -120,7 +120,7 @@
 //     }
 
 //     try {
-//       const response = await fetch("http://localhost:5003/auth/register", {
+//       const response = await fetch("https://empathaiv2-backend.onrender.com/auth/register", {
 //         method: "POST",
 //         headers: {
 //           "Content-Type": "application/json",
@@ -696,7 +696,7 @@
 //     }
 
 //     try {
-//       const res = await fetch('http://localhost:5003/auth/register', {
+//       const res = await fetch('https://empathaiv2-backend.onrender.com/auth/register', {
 //         method: 'POST',
 //         headers: { 'Content-Type': 'application/json' },
 //         body: JSON.stringify(payload),
@@ -1135,7 +1135,7 @@ const Signup = () => {
       payload.roleData={bot_type:formData.bot_type};
     }
     try{
-      const res=await fetch("http://localhost:5003/auth/register",{
+      const res=await fetch("https://empathaiv2-backend.onrender.com/auth/register",{
         method:"POST",
         headers:{"Content-Type":"application/json"},
         body:JSON.stringify(payload)

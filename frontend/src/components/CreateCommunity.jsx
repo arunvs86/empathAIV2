@@ -31,7 +31,7 @@ export default function CreateCommunity({ onCommunityCreated }) {
 
     try {
       const res = await fetch(
-        "http://localhost:5003/communities",
+        "https://empathaiv2-backend.onrender.com/communities",
         {
           method: "POST",
           headers: {
