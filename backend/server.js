@@ -33,6 +33,7 @@ import "./cron/botCron.js";
 import letterRoutes from "./routes/letterRoutes.js";
 import transcriptionRoutes from "./routes/transcriptionRoutes.js";
 import dashboard from "./routes/dashboard.js"
+import habitRoutes from "./routes/habitRoutes.js"
 
 dotenv.config({ path: "./.env" });
 
@@ -93,6 +94,7 @@ app.use("/bot", botRoutes);
 app.use("/letters", letterRoutes);
 app.use("/api", transcriptionRoutes);
 app.use('/api/dashboard',dashboard);
+app.use("/habits", habitRoutes);  
 
 
 app.use((err, req, res, next) => {

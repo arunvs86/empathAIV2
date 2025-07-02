@@ -273,31 +273,29 @@ class PostService{
     }
 
     async addComment(postId, userId, text) {
-        const post = await Post.findById(postId);
-        if (!post) throw new Error("Post not found.");
+      const post = await Post.findById(postId);
+      if (!post) throw new Error("Post not found.");
     
-        // Create the comment object with createdAt
-        const newComment = {
-          userId,
-          text,
-          createdAt: new Date(), // ensure we set a valid date
-        };
+      const user = await User.findByPk(userId);
+      const username = user.username;
     
-        // Push to post.comments
-        post.comments.push(newComment);
+      // Create and push the comment
+      const newComment = { userId, text, createdAt: new Date() };
+      post.comments.push(newComment);
+      await post.save();
     
-        // Save the post
-        await post.save();
+      // Grab the freshly added comment as a plain object
+      const added = post.comments[post.comments.length - 1].toObject();
     
-        // The newly added comment will be at the end of post.comments
-        const addedComment = post.comments[post.comments.length - 1];
+      // Flatten into one object
+      const comment = {
+        username,
+        ...added
+      };
     
-        // If you want to attach a username/profile_picture, you can do so here
-        // e.g., fetch from your user DB or a separate service
-    
-        // Return only the newly added comment (not the entire post)
-        return addedComment;
-      }
+      console.log(comment);
+      return comment;
+    }
     
 
     async deleteComment(postId, commentId, userId, isAdmin = false) {

@@ -91,7 +91,7 @@ export const getUserChats = async (userId) => {
       const userObj = userMap[pId];
       return userObj
         ? { id: userObj.id, username: userObj.username, profile_picture: userObj.profile_picture }
-        : { id: pId, username: "Unknown" };
+        : { id: pId, username: "EmpathAIBot" };
     });
     return c;
   });
@@ -224,7 +224,7 @@ export const getChatMessages = async (chatId) => {
       ...m,
       sender: u
         ? { id: u.id, username: u.username, profile_picture: u.profile_picture }
-        : { id: m.senderId, username: "Unknown" },
+        : { id: m.senderId, username: "EmpathAIBot" },
     };
   });
 
