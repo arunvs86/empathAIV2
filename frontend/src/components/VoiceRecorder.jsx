@@ -122,7 +122,7 @@ function VoiceRecorder({ chatId, onUpload }) {
   return (
     <button
       onClick={recording ? stop : start}
-      className={recording ? "bg-red-500 p-2 rounded" : "bg-blue-500 p-2 rounded"}
+      className={recording ? "bg-red-500 p-2 rounded" : "bg-white/10 p-2 rounded"}
       title={recording ? "Stop recording" : "Record voice"}
     >
       {recording ? "◼︎" : "🎤"}

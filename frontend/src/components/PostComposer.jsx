@@ -76,7 +76,7 @@ export default function PostComposer({communityId, onPostCreated }) {
       // }
 
       const data = await res.json();
-      console.log("POST /posts response:", res.status, data);
+
 
       // 2) If non-2xx, use the server-provided error message:
       if (!res.ok) {
@@ -99,14 +99,14 @@ export default function PostComposer({communityId, onPostCreated }) {
   };
 
   return (
-    <div className="bg-white/20 backdrop-blur-lg rounded-2xl shadow-lg p-6 mb-8">
+    <div className="bg-white/5  rounded-2xl p-6 mb-8 hover:border border-amber-300">
       <form onSubmit={handleSubmit} className="space-y-4">
         <textarea
           rows={4}
           placeholder="Type here and share your toughts 💭 Someone's listening. 🤗"
           value={content}
           onChange={e => setContent(e.target.value)}
-          className="w-full bg-white/30 placeholder-white/90 rounded-lg p-4 focus:outline-none focus:ring-2 focus:ring-white/50 text-white"
+          className="w-full bg-white/5 placeholder-white/90 placeholder-bold rounded-lg p-4 focus:outline-none focus:ring-2 focus:ring-white/50 text-white"
         />
 
 
@@ -115,16 +115,16 @@ export default function PostComposer({communityId, onPostCreated }) {
   options={CATEGORY_OPTIONS}
   value={CATEGORY_OPTIONS.filter(o => categories.includes(o.value))}
   onChange={sel => setCategories(sel ? sel.map(s => s.value) : [])}
-  className="react-select-container text-white placeholder-white"
+  className="react-select-container text-white bg-white/5 placeholder-white"
   classNamePrefix="react-select"
   placeholder="Select or add categories..."
   styles={{
     control: provided => ({
       ...provided,
-      background: "rgba(255,255,255,0.3)",
-      borderColor: "rgba(255,255,255,0.5)",
+      background: "rgba(112, 109, 97, 0.5)",
+      borderColor: "white",
       boxShadow: "none",
-      "&:hover": { borderColor: "rgba(255,255,255,0.7)" },
+      "&:hover": { borderColor: "amber" },
     }),
     singleValue: provided => ({
       ...provided,
@@ -144,7 +144,8 @@ export default function PostComposer({communityId, onPostCreated }) {
     }),
     placeholder: provided => ({
       ...provided,
-      color: "rgba(255,255,255,0.7)",
+      color: "rgba(247, 244, 244, 0.7)",
+      font: "bold",
     }),
     option: (provided, { isFocused, isSelected }) => ({
       ...provided,
@@ -170,10 +171,10 @@ export default function PostComposer({communityId, onPostCreated }) {
           <button
             type="button"
             onClick={() => fileInputRef.current.click()}
-            className="flex items-center space-x-2 text-white/90 hover:text-white"
+            className="flex items-center space-x-2 text-white/90 hover:text-amber-300"
           >
             <ImageIcon className="w-5 h-5" />
-            <span>Media</span>
+            <span>Add Media</span>
           </button>
           <input
             type="file"
@@ -188,22 +189,32 @@ export default function PostComposer({communityId, onPostCreated }) {
           <div className="grid grid-cols-3 gap-3">
             {mediaFiles.map((file, i) => (
               <div key={i} className="relative rounded-lg overflow-hidden">
-                {file.type.startsWith("image/") && (
+                {file.type.startsWith('image/') && (
                   <img
                     src={URL.createObjectURL(file)}
-                    alt=""
+                    alt={file.name}
                     className="w-full h-24 object-cover"
+                  />
+                )}
+                {file.type.startsWith('video/') && (
+                  <video
+                    controls
+                    src={URL.createObjectURL(file)}
+                    className="w-full h-24 object-cover rounded-lg"
+                  />
+                )}
+                {file.type.startsWith('audio/') && (
+                  <audio
+                    controls
+                    src={URL.createObjectURL(file)}
+                    className="w-full"
                   />
                 )}
                 <button
                   type="button"
-                  onClick={() =>
-                    setMediaFiles(prev => prev.filter((_, j) => j !== i))
-                  }
-                  className="absolute top-1 right-1 text-red-400"
-                >
-                  ✕
-                </button>
+                  onClick={() => setMediaFiles(prev => prev.filter((_, j) => j !== i))}
+                  className="absolute top-1 right-1 text-red-400 bg-white/50 rounded-full p-0.5"
+                >✕</button>
               </div>
             ))}
           </div>
@@ -220,9 +231,9 @@ export default function PostComposer({communityId, onPostCreated }) {
           <button
             type="submit"
             disabled={submitting || !content.trim() || remaining < 0}
-            className="bg-white/30 hover:bg-white/40 text-white px-6 py-2 rounded-full font-semibold transition disabled:opacity-50"
+            className="hover:border-amber-300 text-amber-300 px-6 py-2 rounded-full font-semibold transition disabled:opacity-50 border border-white"
           >
-            {submitting ? "Posting..." : "Post"}
+            {submitting ? "Sharing..." : "Share"}
           </button>
         </div>
       </form>

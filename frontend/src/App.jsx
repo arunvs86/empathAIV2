@@ -25,6 +25,8 @@ import UserDetail from './pages/UserDetail';
 import SentimentLiftDetail from "./pages/SentimentLiftDetail";
 import CommunityList from "./components/CommunityList";
 import CreateCommunity from "./components/CreateCommunity";
+import ProfileHabits from "./pages/ProfileHabits";
+import ProfileWeeklyHabits from "./pages/ProfileWeeklyHabits";
 // 
 // Dashboard
 //
@@ -128,6 +130,8 @@ function App() {
         <Route index element={<ProfilePosts />} />
         <Route path="posts" element={<ProfilePosts />} />
         <Route path="journals" element={<ProfileJournals />} />
+        <Route path="/profile/:userId/habits" element={<ProfileWeeklyHabits />} />
+        
 
         {/* <Route path="communities" element={<ProfileCommunities />} />
         <Route path="habits" element={<ProfileHabits />} /> */}

@@ -140,6 +140,7 @@ function PostCard({ post, onPostUpdated, onPostDeleted }) {
         throw new Error(data.error || "Failed to add comment");
       }
       const addedComment = await response.json();
+      console.log("addedComment",addedComment)
       setComments((prev) => [addedComment, ...prev]);
       setNewComment("");
     } catch (err) {
@@ -171,222 +172,8 @@ function PostCard({ post, onPostUpdated, onPostDeleted }) {
     }
   };
 
-  // return (
-  //   <div className="relative bg-white rounded-lg shadow border border-gray-200 mb-6 overflow-hidden hover:shadow-lg transition-shadow duration-200">
-  //     {/* Accent line */}
-  //     <div className="absolute top-0 left-0 h-full w-1 bg-emerald-500" />
-
-  //     {/* Header */}
-  //     <div className="flex items-center justify-between p-4 bg-gray-50">
-  //       <div className="flex items-center space-x-3">
-  //         <img
-  //           src={avatarUrl}
-  //           alt="Avatar"
-  //           className="w-10 h-10 rounded-full object-cover"
-  //         />
-  //         <div>
-  //           <h2 className="text-sm font-bold text-gray-800">{displayName}</h2>
-  //           <p className="text-xs text-gray-500">{createdAt}</p>
-  //         </div>
-  //       </div>
-  //       <span
-  //         className={`px-3 py-1 text-xs font-semibold rounded-full ${
-  //           post.status === "live"
-  //             ? "bg-green-100 text-green-700"
-  //             : post.status === "flagged"
-  //             ? "bg-yellow-100 text-yellow-700"
-  //             : "bg-red-100 text-red-700"
-  //         }`}
-  //       >
-  //         {post.status}
-  //       </span>
-  //     </div>
-
-  //     {/* Community & Last Edited */}
-  //     {(communityName || lastEdited) && (
-  //       <div className="px-4 pt-2 text-xs text-gray-500 flex items-center justify-between">
-  //         {communityName && (
-  //           <p>
-  //             <span className="font-medium">Community:</span> {communityName}
-  //           </p>
-  //         )}
-  //         {lastEdited && <p className="italic">Last edited: {lastEdited}</p>}
-  //       </div>
-  //     )}
-
-  //     {/* Content */}
-  //     <div className="px-4 py-3">
-  //       {isEditing ? (
-  //         <form onSubmit={handleEditSubmit}>
-  //           <textarea
-  //             value={editContent}
-  //             onChange={(e) => setEditContent(e.target.value)}
-  //             className="w-full border border-gray-300 rounded p-3 focus:outline-none focus:ring-2 focus:ring-emerald-400"
-  //             rows="4"
-  //             required
-  //           />
-  //           <div className="flex justify-end mt-3 space-x-3">
-  //             <button
-  //               type="button"
-  //               onClick={() => {
-  //                 setIsEditing(false);
-  //                 setEditContent(post.content);
-  //               }}
-  //               className="text-sm text-gray-600 hover:underline"
-  //             >
-  //               Cancel
-  //             </button>
-  //             <button
-  //               type="submit"
-  //               disabled={loading}
-  //               className="bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-emerald-400"
-  //             >
-  //               {loading ? "Saving..." : "Save"}
-  //             </button>
-  //           </div>
-  //         </form>
-  //       ) : (
-  //         <p className="text-gray-800 text-sm mb-2 whitespace-pre-line leading-relaxed">
-  //           {post.content}
-  //         </p>
-  //       )}
-  //       {error && <p className="text-red-600 text-sm mb-2">{error}</p>}
-  //     </div>
-
-  //     {/* ★ Improved Media Section */}
-  //     {post.media && post.media.length > 0 && (
-  //       <div className="px-4 pb-3">
-  //         <div className="grid grid-cols-1 md:grid-cols gap-4">
-  //           {post.media.map((url, idx) => (
-  //             <div
-  //               key={idx}
-  //               className="overflow-hidden rounded-lg group bg-gray-100"
-  //             >
-  //               <img
-  //                 src={url}
-  //                 alt={`media-${idx}`}
-  //                 className="w-full max-h-96 object-cover transform transition-transform duration-200 group-hover:scale-105"
-  //               />
-  //             </div>
-  //           ))}
-  //         </div>
-  //       </div>
-  //     )}
-
-  //     {/* Footer: categories, stats, actions */}
-  //     <div className="px-4 py-3 border-t border-gray-100 flex items-center justify-between text-sm text-gray-500">
-  //       <div className="flex items-center space-x-4">
-  //         {post.categories && post.categories.length > 0 && (
-  //           <div className="flex space-x-2">
-  //             {post.categories.map((cat, i) => (
-  //               <span
-  //                 key={i}
-  //                 className="bg-emerald-100 text-emerald-700 px-2 py-1 text-xs rounded"
-  //               >
-  //                 {cat}
-  //               </span>
-  //             ))}
-  //           </div>
-  //         )}
-  //         <div className="text-xs flex space-x-3">
-  //           <span>{post.comments?.length || 0} comments</span>
-  //           <span>{post.reported_by?.length || 0} reports</span>
-  //         </div>
-  //       </div>
-  //       {isOwner && !isEditing && (
-  //         <div className="flex space-x-4">
-  //           <button
-  //             onClick={() => setIsEditing(true)}
-  //             className="text-emerald-600 hover:underline"
-  //           >
-  //             Edit
-  //           </button>
-  //           <button
-  //             onClick={handleDelete}
-  //             disabled={loading}
-  //             className="text-red-600 hover:underline"
-  //           >
-  //             Delete
-  //           </button>
-  //         </div>
-  //       )}
-  //     </div>
-
-  //     {/* Comments toggle & message */}
-  //     <div className="px-4 py-2 flex items-center justify-end bg-gray-50 space-x-4">
-  //       <button
-  //         onClick={handleToggleComments}
-  //         className="text-sm text-emerald-600 hover:underline"
-  //       >
-  //         {showComments ? "Hide Comments" : "Show Comments"}
-  //       </button>
-  //       {(!isOwner || post.userId !== currentUser.id) && (
-  //         <button
-  //           onClick={handleMessageClick}
-  //           className="text-sm text-white bg-emerald-600 px-3 py-1 rounded hover:bg-emerald-700"
-  //         >
-  //           Message
-  //         </button>
-  //       )}
-  //     </div>
-
-  //     {/* Comments section */}
-  //     {showComments && (
-  //       <div className="bg-gray-50 px-4 py-3">
-  //         {loadingComments && (
-  //           <p className="text-gray-500 text-sm">Loading comments...</p>
-  //         )}
-  //         <form onSubmit={handleAddComment} className="mb-4">
-  //           <textarea
-  //             value={newComment}
-  //             onChange={(e) => setNewComment(e.target.value)}
-  //             placeholder="Write a comment..."
-  //             className="w-full border border-gray-300 rounded p-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400"
-  //             rows="2"
-  //           />
-  //           <div className="flex justify-end mt-2">
-  //             <button
-  //               type="submit"
-  //               className="bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold py-1 px-3 rounded focus:outline-none focus:ring-2 focus:ring-emerald-400"
-  //             >
-  //               Add Comment
-  //             </button>
-  //           </div>
-  //         </form>
-  //         {comments.length === 0 ? (
-  //           <p className="text-gray-500 text-sm">No comments yet.</p>
-  //         ) : (
-  //           <div className="space-y-3">
-  //             {comments.map((comment) => (
-  //               <div
-  //                 key={comment._id}
-  //                 className="flex items-start space-x-3"
-  //               >
-  //                 <img
-  //                   src={comment.profile_picture || "/assets/avatar.png"}
-  //                   alt="Comment Avatar"
-  //                   className="w-6 h-6 rounded-full object-cover"
-  //                 />
-  //                 <div>
-  //                   <p className="text-sm font-bold text-gray-800">
-  //                     {comment.commentUsername || comment.userId}
-  //                   </p>
-  //                   <p className="text-xs text-gray-500">
-  //                     {new Date(comment.createdAt).toLocaleString()}
-  //                   </p>
-  //                   <p className="text-sm text-gray-800">{comment.text}</p>
-  //                 </div>
-  //               </div>
-  //             ))}
-  //           </div>
-  //         )}
-  //       </div>
-  //     )}
-  //   </div>
-  // );
-
   return (
-    <div className="relative bg-white/20 backdrop-blur-lg rounded-2xl shadow-lg mb-6 overflow-hidden">
+    <div className="relative bg-white/10 backdrop-blur-lg rounded-2xl hover:border border-amber-300 shadow-lg mb-6 overflow-hidden">
       {/* Header */}
       <div className="flex items-center justify-between p-4">
         <div className="flex items-center space-x-3">
@@ -397,9 +184,9 @@ function PostCard({ post, onPostUpdated, onPostDeleted }) {
           </div>
         </div>
         <span
-          className={`px-2 py-1 text-xs rounded-full ${
+          className={`px-2 py-1 text-s rounded-full font-bold hover:border border-amber-300 ${
             post.status === "live"
-              ? "bg-white/30"
+              ? "bg-white/10"
               : post.status === "flagged"
               ? "bg-yellow-200/30"
               : "bg-red-200/30"
@@ -450,29 +237,97 @@ function PostCard({ post, onPostUpdated, onPostDeleted }) {
         {error && <p className="text-red-400 text-sm mt-2">{error}</p>}
       </div>
 
-      {/* Media */}
       {post.media?.length > 0 && (
-        <div className="px-4 pb-3">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {post.media.map((url, i) => (
+  <div className="px-4 pb-3">
+    {post.media.length === 1 ? (
+      // Single media: full-width, taller
+      <div className="w-full">
+        {(() => {
+          const url = post.media[0];
+          const isVideo = /\.(mp4|webm|ogg)$/i.test(url);
+          const isAudio = /\.(mp3|wav|ogg)$/i.test(url);
+          if (isVideo) {
+            return (
+              <video
+                src={url}
+                controls
+                className="w-full h-96 object-cover rounded-lg"
+              />
+            );
+          } else if (isAudio) {
+            return (
+              <audio
+                src={url}
+                controls
+                className="w-full"
+              />
+            );
+          } else {
+            return (
+              <img
+                src={url}
+                alt=""
+                className="w-full h-96 object-cover rounded-lg"
+              />
+            );
+          }
+        })()}
+      </div>
+    ) : (
+      // Multiple media: responsive grid
+      <div
+        className={[
+          "grid gap-3",
+          post.media.length === 2
+            ? "grid-cols-2"
+            : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3",
+        ].join(" ")}
+      >
+        {post.media.map((url, i) => {
+          const isVideo = /\.(mp4|webm|ogg)$/i.test(url);
+          const isAudio = /\.(mp3|wav|ogg)$/i.test(url);
+          if (isVideo) {
+            return (
+              <video
+                key={i}
+                src={url}
+                controls
+                className="w-full h-48 object-cover rounded-lg"
+              />
+            );
+          } else if (isAudio) {
+            return (
+              <audio
+                key={i}
+                src={url}
+                controls
+                className="w-full rounded-lg"
+              />
+            );
+          } else {
+            return (
               <img
                 key={i}
                 src={url}
                 alt=""
-                className="w-full h-48 object-cover rounded-lg group-hover:scale-105 transition-transform"
+                className="w-full h-48 object-cover rounded-lg"
               />
-            ))}
-          </div>
-        </div>
-      )}
+            );
+          }
+        })}
+      </div>
+    )}
+  </div>
+)}
+
 
       {/* Categories & Actions */}
-      <div className="px-4 py-3 flex items-center justify-between text-sm">
+      <div className="px-4 py-3 flex items-center justify-between text-lg font-bold">
         <div className="flex flex-wrap gap-2">
           {post.categories?.map((cat, i) => (
             <span
               key={i}
-              className="bg-white/30 text-white/90 text-xs px-2 py-1 rounded-full"
+              className="bg-white/10 text-white/90 text-xs px-2 py-1 rounded-full hover:border border-amber-300"
             >
               {cat}
             </span>
@@ -507,7 +362,7 @@ function PostCard({ post, onPostUpdated, onPostDeleted }) {
         {!isOwner && (
           <button
             onClick={handleMessageClick}
-            className="bg-white/30 hover:bg-white/40 text-white py-1 px-3 rounded-lg text-sm"
+            className="bg-white/10 font-bold hover:border border-amber-300 bg-white/10 text-white py-1 px-3 rounded-lg text-s"
           >
             Message
           </button>
@@ -522,12 +377,12 @@ function PostCard({ post, onPostUpdated, onPostDeleted }) {
               value={newComment}
               onChange={e => setNewComment(e.target.value)}
               placeholder="Write a comment..."
-              className="w-full bg-white/20 placeholder-white/70 rounded-lg p-2 text-white focus:outline-none focus:ring-2 focus:ring-white/50"
+              className="w-full bg-white/10 placeholder-white/90 rounded-lg p-2 text-white focus:outline-none focus:ring-1 focus:ring-amber-300"
               rows="2"
             />
             <button
               type="submit"
-              className="bg-white/30 hover:bg-white/40 text-white py-1 px-4 rounded-lg text-sm"
+              className="bg-white/10 font-bold hover:border border-amber-300 text-white py-1 px-4 rounded-lg text-sm"
             >
               Add Comment
             </button>
@@ -541,7 +396,7 @@ function PostCard({ post, onPostUpdated, onPostDeleted }) {
                 alt=""
               />
               <div className="text-white text-sm">
-                <p className="font-semibold">{c.commentUsername || c.userId}</p>
+                <p className="font-semibold">{c.username ||c.commentUsername || c.userId}</p>
                 <p className="opacity-80 text-xs">
                   {new Date(c.createdAt).toLocaleString()}
                 </p>

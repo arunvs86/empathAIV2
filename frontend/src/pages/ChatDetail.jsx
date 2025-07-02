@@ -18,12 +18,6 @@ function ChatDetail() {
   const currentUserId = currentUser.id;
   const botId = "c7291129-8ed5-40d6-a504-b96f957ceb88";
 
-  // ─── INSERTED: initialize per-message transcript state ─────────────────────
-  // When we load or receive messages, we'll attach:
-  //   msg.transcript (string|null), msg.transcriptStatus ('loading'|'error'|'complete'|null)
-  // No changes needed here: we'll patch them where we load/fetch.
-  // ────────────────────────────────────────────────────────────────────────────
-
   const { setUnreadChats } = useUnreadChats();
 
   // On mount or chatId change: remove from unread
@@ -361,7 +355,7 @@ function ChatDetail() {
 
  
   return (
-    <div className="bg-white/50 shadow-md rounded border border-gray-200 flex flex-col h-[70vh]">
+    <div className="bg-white/10 shadow-md rounded border border-gray-200 flex flex-col h-[60vh]">
       {/* Header */}
       <div className="px-3 py-2 border-b border-gray-300">
         <h2 className="text-sm font-bold">{headerTitle}</h2>
@@ -377,12 +371,20 @@ function ChatDetail() {
       {/* Input bar */}
       <div className="px-3 py-2 border-t border-gray-300">
         <div className="flex space-x-2">
-          <input
-            className="flex-grow border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-emerald-400"
-            value={newContent}
-            onChange={(e) => setNewContent(e.target.value)}
-            placeholder="Type a message..."
-          />
+        <textarea
+        rows={1}
+        className="flex-grow resize-none border placeholder-white placeholder-bold rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-amber-400"
+        value={newContent}
+        onChange={(e) => setNewContent(e.target.value)}
+        onKeyDown={(e) => {
+          // plain Enter sends; Shift+Enter allows new line
+          if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            handleSend();
+          }
+        }}
+        placeholder="Type a message..."
+      />
           <div className="flex space-x-2">
             {/* <VoiceRecorder
               chatId={chatId}

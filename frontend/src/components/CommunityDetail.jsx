@@ -171,6 +171,7 @@ export default function CommunityDetail({ communityId, onBack }) {
   const handleJoin = async () => {
     try {
       const token = localStorage.getItem("token");
+      console.log("req join")
       const res = await fetch(
         `https://empathaiv2-backend.onrender.com/communities/${community._id}/join`,
         { method: "POST", headers: { Authorization: `Bearer ${token}` } }
@@ -230,9 +231,9 @@ export default function CommunityDetail({ communityId, onBack }) {
           </p>
         </div>
         <div className="flex items-center space-x-4">
-          <button onClick={onBack} className="text-white/80 hover:text-white">
+          {/* <button onClick={onBack} className="text-white/80 hover:text-white">
             ← Back
-          </button>
+          </button> */}
           <button onClick={toggleFavorite} className="text-2xl text-white/80 hover:text-white">
             {isFavorited ? "★" : "☆"}
           </button>
