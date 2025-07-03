@@ -151,7 +151,7 @@ function App() {
         {/* Tabs under the same parent */}
         <Route path="posts"       element={<ProfilePosts />} />
         <Route path="journals"    element={<ProfileJournals />} />
-        {/* <Route path="communities" element={<ProfileCommunities />} /> */}
+        <Route path="communities" element={<CommunityList />} />
         <Route path="habits"      element={<ProfileWeeklyHabits />} />
 
         {/* Catch‐all redirect back to posts */}

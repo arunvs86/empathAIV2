@@ -74,7 +74,7 @@
 // }
 
 // pages/MyProfile.jsx
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState,useMemo } from 'react';
 import { Outlet, NavLink, useNavigate, useParams } from 'react-router-dom';
 import ProfileHeader from '../components/ProfileHeader';
 import ProfileEditModal from '../components/ProfileEditModal';
@@ -92,6 +92,11 @@ export default function MyProfile() {
     }
   }, []);
   const isOwnProfile = currentUser.id === userId;
+
+  const outletContext = useMemo(
+       () => ({ userId, isOwnProfile }),
+       [userId, isOwnProfile]
+     );
 
   // Profile user data (fetched via ?ids= endpoint)
   const [profileUser, setProfileUser] = useState(null);
@@ -147,6 +152,7 @@ export default function MyProfile() {
           habits     = await hRes.json();
         }
 
+        console.log("communities",communities)
         // 4) Set stats
         setStats({
           posts:       Array.isArray(posts) ? posts.length : 0,
