@@ -15,4 +15,5 @@ router.get("/:id/communities", authMiddleware, UserController.getUserCommunities
 router.put("/:userId",authMiddleware, UserController.updateProfile);
 
 
+
 export default router;

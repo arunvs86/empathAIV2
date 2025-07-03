@@ -2,10 +2,14 @@ import Post from "../../models/Post.js";
 import User from "../../models/User.js";
 import Community from "../../models/Community.js"
 import UserViolations from "../../models/UserViolations.js"
+import axios from 'axios';
 
 class PostService{
 
+  
+
     async createPost(userId, postData) {
+      
       const { content, media, categories, community_id } = postData;
       console.log(postData)
       const user = await User.findByPk(userId)
@@ -19,9 +23,6 @@ class PostService{
           }
       }
   
-      // --- New Classification Logic ---
-      // Define the candidate labels to be used for classification.
-      // Adjust these labels as necessary for your application.
       const candidateLabels = [
         "Grief & Bereavement",
         "Depression",
@@ -35,54 +36,71 @@ class PostService{
         "Offensive Content"
       ];
        
-      try {
-        const response = await fetch('https://flask-app-275410178944.europe-west2.run.app/classify', {  
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            user_post: content,
-            candidate_labels: candidateLabels
-          })
-        });
-        const result = await response.json();
-        console.log(result)
+//       try {
+//         const response = await fetch('https://flask-app-275410178944.europe-west2.run.app/classify', {  
+//           method: 'POST',
+//           headers: { 'Content-Type': 'application/json' },
+//           body: JSON.stringify({
+//             user_post: content,
+//             candidate_labels: candidateLabels
+//           })
+//         });
+//         // const result = await response.json();
+//         // console.log(result)
 
-        // If no topics or top score too low, discard post
-        if (!result.topics || result.topics.length === 0) {
-          throw new Error("Your post has been removed by Team EmpathAI for its disturbing content.");
-        }
-        // Sort by score desc
-        result.topics.sort((a, b) => b.score - a.score);
+//         if (!response.ok) {
+//           const text = await response.text();
+//           console.error('Non-200 from classify endpoint:', text);
+//           throw new Error(`Classification API returned HTTP ${response.status}`);
+//         }
+
+//         const contentType = response.headers.get('content-type') || '';
+// if (!contentType.includes('application/json')) {
+//   const text = await response.text();
+//   console.error('Expected JSON but got:', text);
+//   throw new Error('Classification API did not return JSON');
+// }
+
+
+// // Now safely parse
+// const result = await response.json();
+
+//         // If no topics or top score too low, discard post
+//         // if (!result.topics || result.topics.length === 0) {
+//         //   throw new Error("Your post has been removed by Team EmpathAI for its disturbing content.");
+//         // }
+//         // Sort by score desc
+//         result.topics.sort((a, b) => b.score - a.score);
       
-        // Set your minimum acceptable score threshold
-        console.log(result.topics)
-        // if (result.topics[0].label === "Offensive Content" || result.topics[0].label === "Abuse & Harassment") {
-        //   throw new Error("Your post has been removed by Team EmpathAI for its disturbing content.");
-        // }
+//         // Set your minimum acceptable score threshold
+//         console.log(result.topics)
+//         if (result.topics[0].label === "Offensive Content" || result.topics[0].label === "Abuse & Harassment") {
+//           throw new Error("Your post has been removed by Team EmpathAI for its disturbing content.");
+//         }
 
-        const topThreeLabels = result.topics
-                                .slice(0, 3)                // take at most the first 3
-                                .map((t) => t.label);       // pull out their labels
+//         const topThreeLabels = result.topics
+//                                 .slice(0, 3)                // take at most the first 3
+//                                 .map((t) => t.label);       // pull out their labels
 
-        const banned = ["Offensive Content", "Abuse & Harassment"];
+//         const banned = ["Offensive Content", "Abuse & Harassment"];
 
-        // if any of the top-three is banned, reject
-        if (topThreeLabels.some((label) => banned.includes(label))) {
-            throw new Error(
-            "Your post has been removed by Team EmpathAI for its disturbing content."
-            );
-          }
+//         // if any of the top-three is banned, reject
+//         if (topThreeLabels.some((label) => banned.includes(label))) {
+//             throw new Error(
+//             "Your post has been removed by Team EmpathAI for its disturbing content."
+//             );
+//           }
       
-        // Take top two labels
-        const topTwoCategories = result.topics.slice(0, 2).map((t) => t.label);
-        console.log("Top two categories:", topTwoCategories);
+//         // Take top two labels
+//         const topTwoCategories = result.topics.slice(0, 2).map((t) => t.label);
+//         console.log("Top two categories:", topTwoCategories);
       
         // Create the post as before
         const newPost = await Post.create({
           userId,
           content,
           media,
-          categories: topTwoCategories,
+          categories,
           communityId: community_id || null,
         });
       
@@ -96,8 +114,111 @@ class PostService{
           // Handle errors from the classification API call if needed
           throw new Error(error);
       }
-  }
   
+    
+
+
+
+// async createPost(userId, postData) {
+
+//   const HF_API_TOKEN = process.env.HF_API_TOKEN;
+//   const HF_MODEL_ID  = process.env.HF_MODEL_ID || 'facebook/bart-large-mnli';
+//   const HF_API_URL   = process.env.HF_API_URL
+
+//   const CANDIDATE_LABELS = [
+//     "Grief & Bereavement",
+//     "Depression",
+//     "Anxiety",
+//     "Coping Strategies",
+//     "Self-Care",
+//     "Emotional Healing",
+//     "Social Support",
+//     "Resilience",
+//     "Abuse & Harassment",
+//     "Offensive Content"
+//   ];
+
+//   const { content, media, categories, community_id } = postData;
+
+//   // 1) Fetch user
+//   const user = await User.findByPk(userId);
+//   if (!user) throw new Error('User not found');
+
+//   // 2) Validate community membership
+//   if (community_id) {
+//     const community = await Community.findByPk(community_id);
+//     if (!community) throw new Error('The community could not be found');
+//     if (community.type === 'private' && !community.members.includes(userId)) {
+//       throw new Error('You are not part of this private community');
+//     }
+//   }
+
+//   // 3) Call Hugging Face inference API
+//   let hfResults;
+//   try {
+//     const hfResp = await axios.post(
+//       HF_API_URL,
+//       {
+//         inputs: content,
+//         parameters: { candidate_labels: CANDIDATE_LABELS }
+//       },
+//       {
+//         headers: {
+//           Authorization: `Bearer ${HF_API_TOKEN}`,
+//           'Content-Type': 'application/json'
+//         },
+//         timeout: 30000
+//       }
+//     );
+//     hfResults = hfResp.data;
+//   } catch (err) {
+//     console.error('HF inference error:', err.response?.data || err.message);
+//     throw new Error('Classification service unavailable');
+//   }
+
+//   // 4) Validate HF response shape
+//   if (
+//     !hfResults.labels ||
+//     !Array.isArray(hfResults.labels) ||
+//     !hfResults.scores ||
+//     !Array.isArray(hfResults.scores) ||
+//     hfResults.labels.length !== hfResults.scores.length
+//   ) {
+//     throw new Error('Invalid classification response');
+//   }
+
+//   // 5) Build and sort topics by score descending
+//   const topics = hfResults.labels.map((label, idx) => ({
+//     label,
+//     score: hfResults.scores[idx]
+//   })).sort((a, b) => b.score - a.score);
+
+//   // 6) Block if top topic is banned
+//   const banned = new Set(['Abuse & Harassment', 'Offensive Content']);
+//   if (topics[0] && banned.has(topics[0].label)) {
+//     throw new Error('Your post was removed for disturbing content.');
+//   }
+
+//   // 7) Pick top two categories for tagging
+//   const topTwoCategories = topics.slice(0, 2).map(t => t.label);
+//   console.log('Top two categories:', topTwoCategories);
+
+//   // 8) Persist the post
+//   const newPost = await Post.create({
+//     userId,
+//     content,
+//     media: media || null,
+//     // merge user-provided categories with HF categories, if desired:
+//     categories: categories?.concat(topTwoCategories) || topTwoCategories,
+//     communityId: community_id || null
+//   });
+
+//   // 9) Attach username and return
+//   const postObj = newPost.toJSON();
+//   postObj.username = user.username || 'UnknownUser';
+//   postObj.classifiedCategories = topTwoCategories;
+//   return postObj;
+// }
     
     async getAllPosts(filters = {}, pagination = { limit: 15, page: 1 }) {
       const { limit, page } = pagination;
@@ -379,6 +500,7 @@ class PostService{
         }
 
         post.reported_by.push(userId);
+        post.status="flagged"
         await post.save();
 
         await UserViolations.create({
