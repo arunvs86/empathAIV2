@@ -709,14 +709,14 @@ export default function Signup() {
   return (
     <div
   className="min-h-screen grid grid-cols-1 md:grid-cols-2"   style={{
-    backgroundImage: "url('/assets/wallpaperSignup.webp')",
+    // backgroundImage: "url('/assets/wallpaperSignup.webp')",
     backgroundSize: "cover",
     backgroundPosition: "center",
   }}
 >
       
       {/* ── LEFT PANEL ── */}
-      <div className="flex flex-col items-center justify-center px-12 text-black/90">
+      <div className="flex flex-col  bg-gray items-center justify-center px-12 text-black/90">
         <h2 className="text-4xl font-bold mb-4">Join EmpathAI</h2>
         <p className="text-center text-2xl italic mb-8">
           A digital home where you can share your story, find support, and heal together.

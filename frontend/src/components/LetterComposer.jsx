@@ -74,7 +74,7 @@ export default function LetterComposer({ onLetterCreated }) {
   };
 
   return (
-    <div className="bg-white/50 border border-gray-200 shadow-sm rounded-lg p-6 mb-8">
+    <div className="bg-white/10 border border-gray-200 shadow-sm rounded-lg p-6 mb-8">
       {/* <h3 className="text-2xl font-semibold mb-4 text-gray-900">Write a Letter</h3> */}
       <h2 className="
   text-center 
@@ -94,7 +94,7 @@ export default function LetterComposer({ onLetterCreated }) {
           placeholder="Dear …"
           value={text}
           onChange={(e) => setText(e.target.value)}
-          className="w-full border border-gray-300 rounded-lg p-4 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-300"
+          className="w-full border border-gray-300 rounded-lg p-4 text-white placeholder-white focus:outline-none focus:ring-2 focus:ring-amber-300"
           style={{ resize: 'vertical' }}
         />
 
@@ -105,10 +105,10 @@ export default function LetterComposer({ onLetterCreated }) {
             onClick={() => fileInputRef.current.click()}
             className="flex items-center space-x-1 text-gray-600 hover:text-gray-900"
           >
-            <ImageIcon className="w-5 h-5" />
-            <span className="text-sm">Add Image</span>
+            <ImageIcon className="w-5 h-5 text-white" />
+            <span className="text-sm text-white ">Add Image</span>
           </button>
-          <span className="text-sm text-gray-500">
+          <span className="text-sm text-white">
             {mediaFiles.length}/3 images
           </span>
         </div>
@@ -150,7 +150,7 @@ export default function LetterComposer({ onLetterCreated }) {
           <button
             type="submit"
             disabled={submitting || !text.trim()}
-            className="bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-semibold py-2 px-6 rounded-full focus:outline-none focus:ring-2 focus:ring-emerald-400 transition"
+            className="bg-amber-600 font-bold hover:bg-amber-400 text-white/90 disabled:opacity-50  font-semibold py-2 px-6 rounded-full focus:outline-none focus:ring-2 focus:ring-emerald-400 transition"
           >
             {submitting ? 'Saving…' : 'Save Letter'}
           </button>

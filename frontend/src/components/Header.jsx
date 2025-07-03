@@ -52,10 +52,10 @@ export default function Header() {
     { label: "My Journals", to: `/profile/${currentUser.id}/journals` },
   ];
   const MORE_TABS = [
-    { label: "Events Nearby", to: "/feed/events" },
-    { label: "Plant a Sapling", to: "/feed/sapling" },
-    { label: "Wellness Tips", to: "/feed/wellness" },
-    { label: "Mindful Meditation", to: "/feed/meditation" },
+    // { label: "Events Nearby", to: "/feed/events" },
+    { label: "Plant a Sapling", to: "/plant-sapling" },
+    { label: "Wellness Tips", to: "/wellness-tips" },
+    { label: "Mindful Meditation", to: "/mindful-meditation" },
   ];
 
   const goProfile = () => navigate(`/profile/${currentUser.id}`);
@@ -118,9 +118,9 @@ export default function Header() {
               </span>
             )}
           </Link>
-          <Link to="/notifications" className="text-gray-200 hover:text-amber-300 transition">
+          {/* <Link to="/notifications" className="text-gray-200 hover:text-amber-300 transition">
             <Bell className="w-6 h-6" />
-          </Link>
+          </Link> */}
 
           <div className="relative flex-shrink-0" ref={userRef}>
             <button
@@ -148,14 +148,7 @@ export default function Header() {
                   <MessageCircle className="w-4 h-4 mr-2" />
                   Messages
                 </Link>
-                <Link
-                  to="/notifications"
-                  className="flex items-center px-4 py-2 text-gray-800 hover:text-amber-500 transition"
-                  onClick={() => setOpenUser(false)}
-                >
-                  <Bell className="w-4 h-4 mr-2" />
-                  Notifications
-                </Link>
+                
                 <button
                   onClick={logout}
                   className="flex items-center w-full px-4 py-2 text-gray-800 hover:text-amber-500 transition"

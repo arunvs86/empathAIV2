@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route,Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import HomeLayout from "./layout/HomeLayout";
@@ -27,6 +27,8 @@ import CommunityList from "./components/CommunityList";
 import CreateCommunity from "./components/CreateCommunity";
 import ProfileHabits from "./pages/ProfileHabits";
 import ProfileWeeklyHabits from "./pages/ProfileWeeklyHabits";
+import MindfulMeditationPage from "./pages/MindfulMeditation";
+import ReligiousPracticesPage from "./pages/ReligiousPracticesPage";
 // 
 // Dashboard
 //
@@ -50,6 +52,8 @@ import DashboardPage from './pages/DashboardPage';
  import CommunityPostsDetail from './pages/CommunityPostsDetail';
  import ViolationsDetail from './pages/ViolationsDetail';
  import AdminActionsDetail from './pages/AdminActionsDetail';
+import PlantSaplingPage from "./pages/PlantSaplingPage";
+import WellnessTipsPage from "./pages/WellnessTipsPage";
 // import MoodTrendsDetail from './pages/MoodTrendsDetail';
 // import MoodCorrelationDetail from './pages/MoodCorrelationDetail';
 
@@ -116,6 +120,14 @@ function App() {
           <Route path="/letters" element={<LettersPage />} />
           <Route path="/letters/:id" element={<LetterView />} />
 
+          <Route path="/mindful-meditation" element={<MindfulMeditationPage />} />
+          <Route path="/plant-sapling" element={<PlantSaplingPage />} />
+          <Route path="/wellness-tips" element={<WellnessTipsPage />} />
+          <Route path="/spiritual" element={<ReligiousPracticesPage/>} />
+
+
+
+
 
         <Route path="/therapists" element={<Therapists />} />
         <Route path="/therapist/appointments" element={<TherapistAppointments />} />
@@ -123,21 +135,34 @@ function App() {
         <Route path="/therapists/:id" element={<TherapistDetail />} />
         <Route path="/chats" element={<ChatList />} />
         <Route path="/chats/:chatId" element={<ChatDetail />} />
-        <Route path="/profile/:userId/journals" element={<ProfileJournals />} />
+        {/* <Route path="/profile/:userId/journals" element={<ProfileJournals />} />
         <Route path="/profile/:userId" element={<MyProfile />} />
 
         <Route path="/profile/:userId" element={<MyProfile />}>
         <Route index element={<ProfilePosts />} />
         <Route path="posts" element={<ProfilePosts />} />
         <Route path="journals" element={<ProfileJournals />} />
-        <Route path="/profile/:userId/habits" element={<ProfileWeeklyHabits />} />
+        <Route path="/profile/:userId/habits" element={<ProfileWeeklyHabits />} /> */}
+
+      <Route path="/profile/:userId" element={<MyProfile />}>
+        {/* Default to Posts */}
+        <Route index element={<ProfilePosts />} />
+
+        {/* Tabs under the same parent */}
+        <Route path="posts"       element={<ProfilePosts />} />
+        <Route path="journals"    element={<ProfileJournals />} />
+        {/* <Route path="communities" element={<ProfileCommunities />} /> */}
+        <Route path="habits"      element={<ProfileWeeklyHabits />} />
+
+        {/* Catch‐all redirect back to posts */}
+        <Route path="*" element={<Navigate to="posts" replace />} />
+      </Route>
         
 
         {/* <Route path="communities" element={<ProfileCommunities />} />
         <Route path="habits" element={<ProfileHabits />} /> */}
       </Route>
       
-        </Route>
         
       </Routes>
     </Router>

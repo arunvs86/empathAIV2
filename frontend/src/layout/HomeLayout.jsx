@@ -16,6 +16,10 @@ export default function HomeLayout() {
   const isCommunities = location.pathname.startsWith("/communities");
   const isJournals = location.pathname.match(/^\/profile\/[^/]+\/journals/) != null
   const isLetters = location.pathname.startsWith("/letters");
+  const isHabits = location.pathname.match(/^\/profile\/[^/]+\/habits/) != null
+  const isMindful = location.pathname.startsWith("/mindful");
+  const isPlant = location.pathname.startsWith("/plant");
+  const isWellness = location.pathname.startsWith("/wellness");
 
   let tagline = "Healing begins with a single deep breath!"
 
@@ -33,6 +37,28 @@ export default function HomeLayout() {
       {
         tagline = "Your Words, Their Memory—A Personal Letter for Healing"
       }
+
+      if(isHabits)
+        {
+          tagline = "And it all begins with small wins!"
+        }
+        if(isMindful)
+          {
+            tagline = "Find your peace, one breath at a time"
+          }
+          if(isPlant)
+            {
+              tagline = "A Seed of Hope, A Tree of Life"
+            }
+
+            if(isWellness)
+              {
+                tagline = "The best way out is always through!"
+              }
+
+            
+
+          
 
    // pick background clip based on local time
    const hour    = new Date().getHours(); // 0–23

@@ -9,17 +9,26 @@ function MainContent() {
   const [loading, setLoading]   = useState(true);
   const [error, setError]       = useState(null);
 
+  const location = useLocation();
+
+
   // Search / filter / sort state
   const [searchText, setSearchText]       = useState("");
   const [selectedTopic, setSelectedTopic] = useState("");
   const [sortOrder, setSortOrder]         = useState("desc"); // 'desc' = newest first
 
     useEffect(() => {
-        if (location.pathname === "/faith") {
-          setSearchText("");
-          setSelectedTopic("Religious Support");
-        setSortOrder("desc");
-        }
+          if (location.pathname === "/faith") {
+              // when landing on /faith, apply the faith filter
+              setSearchText("");
+              setSelectedTopic("Religious Support");
+              setSortOrder("desc");
+            } else {
+              // on any other route, clear that filter so you see all posts
+              setSearchText("");
+              setSelectedTopic("");
+              setSortOrder("desc");
+            }
         // else: leave user’s manual choice intact
      }, [location.pathname]);
 

@@ -743,7 +743,7 @@ export default function ProfileWeeklyHabits() {
     >
       {/* header + new */}
       <div className="flex justify-between items-center">
-        <h2 className="text-3xl font-calligraphy text-gray-900">
+        <h2 className="text-3xl font-calligraphy text-white">
           My Weekly Practices
         </h2>
         <button

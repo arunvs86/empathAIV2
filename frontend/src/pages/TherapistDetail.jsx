@@ -542,25 +542,26 @@ function TherapistDetail() {
   return (
     <div className="max-w-4xl mx-auto mt-6 px-4 relative">
       {/* Therapist Info */}
-      <div className="bg-white/50 shadow-md rounded-md p-6 mb-6">
-        <h2 className="text-2xl font-bold mb-2 text-gray-800">
+      <div className="bg-white/10 shadow-md rounded-md p-6 mb-6">
+        <h2 className="text-2xl font-bold mb-2 text-white">
           {therapist.User?.username}
         </h2>
-        <p className="text-sm text-gray-600 mb-2">
+        <p className="text-sm text-white mb-2">
+          {console.log(therapist)}
           Specializations:{" "}
-          <span className="text-gray-800">
+          <span className="text-white">
             {therapist.specialization_tags?.join(", ")}
           </span>
         </p>
-        <p className="text-sm text-gray-600 mb-2">
+        <p className="text-sm text-white mb-2">
           Experience:{" "}
-          <span className="text-gray-800">
+          <span className="text-white">
             {therapist.experience_years} years
           </span>
         </p>
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-white">
           License #:{" "}
-          <span className="text-gray-800">
+          <span className="text-white">
             {therapist.license_number}
           </span>
         </p>

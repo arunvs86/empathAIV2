@@ -1,6 +1,7 @@
+// // components/ProfileHeader.jsx
 // import React from 'react';
 
-// export default function ProfileHeader({ stats = {} }) {
+// export default function ProfileHeader({ stats = {}, onEdit }) {
 //   const stored = localStorage.getItem('user') || '{}';
 //   const user = JSON.parse(stored);
 //   const {
@@ -29,8 +30,8 @@
 
 //       {/* Name & Bio */}
 //       <div className="mt-6 md:mt-0 md:ml-8 flex-1">
-//         <h1 className="text-3xl font-bold text-gray-900">{username}</h1>
-//         <p className="mt-2 text-gray-600 leading-relaxed max-w-xl">{bio}</p>
+//         <h1 className="text-3xl font-bold text-gray-900">"TEST"</h1>
+//         <p className="mt-2 text-white-600 leading-relaxed max-w-xl">{bio}</p>
 
 //         {/* Stats row */}
 //         <div className="mt-6 flex flex-wrap gap-4">
@@ -56,7 +57,7 @@
 //       {/* Edit button */}
 //       <div className="mt-6 md:mt-0 md:ml-8">
 //         <button
-//           onClick={() => console.log('Navigate to Edit Profile')}
+//           onClick={onEdit}
 //           className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-full shadow-md transition"
 //         >
 //           Edit Profile
@@ -67,12 +68,20 @@
 // }
 
 
-// components/ProfileHeader.jsx
+
 import React from 'react';
 
-export default function ProfileHeader({ stats = {}, onEdit }) {
+export default function ProfileHeader({
+  user: propUser,
+  stats = {},
+  onEdit,
+  isOwnProfile
+}) {
+  // If no user prop, fall back to the locally logged-in user
   const stored = localStorage.getItem('user') || '{}';
-  const user = JSON.parse(stored);
+  const localUser = JSON.parse(stored);
+  const user = propUser || localUser;
+
   const {
     username = 'Anonymous',
     profile_picture,
@@ -92,8 +101,8 @@ export default function ProfileHeader({ stats = {}, onEdit }) {
       <div className="flex-shrink-0">
         <img
           src={profile_picture || '/assets/avatar.png'}
-          alt="Your avatar"
-          className="w-28 h-28 rounded-full object-cover border-4 border-emerald-200 shadow-md"
+          alt={`${username}'s avatar`}
+          className="w-28 h-28 rounded-full object-cover border-4 border-emerald-200 shadow-md cursor-pointer"
         />
       </div>
 
@@ -123,17 +132,17 @@ export default function ProfileHeader({ stats = {}, onEdit }) {
         </div>
       </div>
 
-      {/* Edit button */}
-      <div className="mt-6 md:mt-0 md:ml-8">
-        <button
-          onClick={onEdit}
-          className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-full shadow-md transition"
-        >
-          Edit Profile
-        </button>
-      </div>
+      {/* Edit button (only on own profile) */}
+      {isOwnProfile && (
+        <div className="mt-6 md:mt-0 md:ml-8">
+          <button
+            onClick={onEdit}
+            className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-full shadow-md transition"
+          >
+            Edit Profile
+          </button>
+        </div>
+      )}
     </div>
   );
 }
-
-

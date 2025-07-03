@@ -3,10 +3,10 @@ import CreatableSelect from 'react-select/creatable';
 import { ImageIcon, VideoIcon, Music, FileText } from 'lucide-react';
 
 const CATEGORY_OPTIONS = [
-  { value: 'Wellness tips', label: 'Wellness tips' },
-  { value: 'Mindful meditation', label: 'Mindful meditation' },
   { value: 'Self-Care', label: 'Self-Care' },
   { value: 'Grief & Bereavement', label: 'Grief & Bereavement' },
+  { value: 'Religious Support', label: 'Religious Support' },
+  { value: 'Spiritual Healing', label: 'Spiritual Healing' },
 ];
 const MAX_WORDS = 500;
 

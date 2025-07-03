@@ -47,13 +47,13 @@ export default function LettersPage() {
             {letters.map(ltr => (
               <li
                 key={ltr._id}
-                className="border border-gray-200 bg-white/50 rounded-lg p-4 hover:shadow transition"
+                className="border border-gray-200 bg-white/10 rounded-lg p-4 hover:shadow transition"
               >
                 <Link to={`/letters/${ltr._id}`} className="block space-y-1">
-                  <p className="text-gray-800">
+                  <p className="text-white">
                     {ltr.text.slice(0, 60)}{ltr.text.length>60 && '…'}
                   </p>
-                  <time className="text-sm text-gray-500">
+                  <time className="text-sm text-white">
                     {new Date(ltr.createdAt).toLocaleString()}
                   </time>
                 </Link>

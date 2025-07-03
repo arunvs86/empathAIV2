@@ -1,6 +1,19 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { createChat } from "../services/chatApi";
+import { createPortal } from "react-dom";
+
+function Modal({ children, onClose }) {
+  return createPortal(
+    <div
+      className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/60"
+      onClick={onClose}
+    >
+      <div onClick={e => e.stopPropagation()}>{children}</div>
+    </div>,
+    document.body
+  );
+}
 
 function PostCard({ post, onPostUpdated, onPostDeleted }) {
   const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
@@ -16,6 +29,12 @@ function PostCard({ post, onPostUpdated, onPostDeleted }) {
   const [comments, setComments] = useState(post.comments || []);
   const [loadingComments, setLoadingComments] = useState(false);
   const [newComment, setNewComment] = useState("");
+
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [reportReason, setReportReason] = useState("");
+  const [reportDesc, setReportDesc] = useState("");
+  const [reportError, setReportError] = useState("");
+  const [reportLoading, setReportLoading] = useState(false);
 
   const createdAt = post.createdAt
     ? new Date(post.createdAt).toLocaleString()
@@ -172,12 +191,54 @@ function PostCard({ post, onPostUpdated, onPostDeleted }) {
     }
   };
 
+  const handleReport = async () => {
+    if (!reportReason) {
+      setReportError("Please select a reason.");
+      return;
+    }
+    setReportLoading(true);
+    setReportError("");
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(
+        `https://empathaiv2-backend.onrender.com/posts/${post._id}/report`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            reason:      reportReason,
+            description: reportDesc
+          })
+        }
+      );
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Report failed");
+      // locally flag the post
+      onPostUpdated({
+        ...post,
+        status:      "flagged",
+        reported_by: [...(post.reported_by||[]), currentUser.id]
+      });
+      setShowReportModal(false);
+    } catch (err) {
+      setReportError(err.message);
+    } finally {
+      setReportLoading(false);
+    }
+  };
+
   return (
-    <div className="relative bg-white/10 backdrop-blur-lg rounded-2xl hover:border border-amber-300 shadow-lg mb-6 overflow-hidden">
+    <div className="relative bg-white/10 backdrop-blur-lg rounded-2xl hover:border border-amber-300 shadow-lg mb-6">
       {/* Header */}
       <div className="flex items-center justify-between p-4">
         <div className="flex items-center space-x-3">
-          <img src={avatarUrl} className="w-10 h-10 rounded-full" alt="avatar" />
+        <NavLink to={`/profile/${post.userId}`}>
+
+          <img src={avatarUrl} className="w-10 h-10 rounded-full"  alt="avatar" />
+          </NavLink>
           <div className="text-white">
             <h2 className="font-semibold">{displayName}</h2>
             <p className="text-xs opacity-80">{createdAt}</p>
@@ -353,21 +414,32 @@ function PostCard({ post, onPostUpdated, onPostDeleted }) {
 
       {/* Footer */}
       <div className="px-4 py-2 bg-white/10 flex justify-between items-center">
-        <button
-          onClick={handleToggleComments}
-          className="text-white/90 hover:underline text-sm"
-        >
-          {showComments ? "Hide Comments" : `${comments.length} Comments`}
-        </button>
-        {!isOwner && (
-          <button
-            onClick={handleMessageClick}
-            className="bg-white/10 font-bold hover:border border-amber-300 bg-white/10 text-white py-1 px-3 rounded-lg text-s"
-          >
-            Message
-          </button>
-        )}
-      </div>
+       {/* Comments toggle on the left */}
+       <button
+         onClick={handleToggleComments}
+         className="text-white/90 hover:underline text-sm"
+       >
+         {showComments ? "Hide Comments" : `${comments.length} Comments`}
+       </button>
+       {/* Report + Message grouped on the right */}
+       <div className="flex items-center gap-4">
+         <button
+           onClick={() => setShowReportModal(true)}
+           className="text-yellow-300 hover:underline text-sm"
+         >
+           Report
+         </button>
+         {!isOwner && (
+           <button
+             onClick={handleMessageClick}
+             className="bg-white/10 text-white py-1 px-3 rounded-lg text-sm hover:border border-amber-300"
+           >
+             Message
+           </button>
+         )}
+       </div>
+     </div>
+
 
       {/* Comments */}
       {showComments && (
@@ -406,9 +478,63 @@ function PostCard({ post, onPostUpdated, onPostDeleted }) {
           ))}
         </div>
       )}
+
+{showReportModal && (
+        <Modal onClose={() => setShowReportModal(false)}>
+          <div className="bg-white rounded-lg p-6 w-11/12 max-w-md text-black">
+            <h2 className="text-xl font-semibold mb-4">Report Post</h2>
+
+            <label className="block mb-2">
+              Reason:
+              <select
+                className="mt-1 w-full p-2 border rounded"
+                value={reportReason}
+                onChange={e => setReportReason(e.target.value)}
+              >
+                <option value="">-- Select reason --</option>
+                <option value="spam">Spam</option>
+                <option value="abuse">Abuse</option>
+                <option value="misinformation">Misinformation</option>
+                <option value="harmful content">Harmful Content</option>
+                <option value="other">Other</option>
+              </select>
+            </label>
+
+            <label className="block mb-4">
+              Details (optional):
+              <textarea
+                className="mt-1 w-full p-2 border rounded"
+                rows="3"
+                value={reportDesc}
+                onChange={e => setReportDesc(e.target.value)}
+                placeholder="Additional context..."
+              />
+            </label>
+
+            {reportError && (
+              <p className="text-red-600 text-sm mb-2">{reportError}</p>
+            )}
+
+            <div className="flex justify-end space-x-2">
+              <button
+                onClick={() => setShowReportModal(false)}
+                className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+                disabled={reportLoading}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleReport}
+                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                disabled={reportLoading}
+              >
+                {reportLoading ? "Reporting…" : "Report"}
+              </button>
+            </div>
+          </div>
+        </Modal>
+      )}
     </div>
-);
-
+  );
 }
-
 export default PostCard;

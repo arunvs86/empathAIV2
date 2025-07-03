@@ -24,6 +24,10 @@ export default function CommunityCard({ community, onView }) {
 
   return (
     <div className="relative bg-white/50 backdrop-blur-md rounded-xl p-6 hover:bg-white/60 transition">
+      <Link
+      to={`/communities/${_id}`}
+      className="text-emerald-600 hover:underline text-sm font-medium"
+    >
       {/* colored stripe */}
       <div className="absolute top-0 left-0 h-full w-1 bg-blue-400 rounded-tr-xl rounded-br-xl" />
 
@@ -48,8 +52,9 @@ export default function CommunityCard({ community, onView }) {
             Created: {new Date(createdAt).toLocaleDateString()}
           </span>
         )}
+        
       </div>
-
+      </Link>
   <div className="flex justify-end">
     <Link
       to={`/communities/${_id}`}
