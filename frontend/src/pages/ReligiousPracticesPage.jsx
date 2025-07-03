@@ -395,7 +395,7 @@ export default function ReligiousPracticesPage() {
           className="w-full h-full object-contain"
         />
         <div className="absolute inset-0 bg-black/50 flex flex-col justify-end p-8">
-          <h1 className="text-4xl md:text-5xl font-calligraphy">Finding Comfort Through Faith</h1>
+          {/* <h1 className="text-4xl md:text-5xl font-calligraphy">Finding Comfort Through Faith</h1> */}
           <p className="mt-2 text-lg md:text-xl">Explore rituals and beliefs across religions to support you in grief.</p>
         </div>
       </section>

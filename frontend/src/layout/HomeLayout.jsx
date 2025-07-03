@@ -20,6 +20,7 @@ export default function HomeLayout() {
   const isMindful = location.pathname.startsWith("/mindful");
   const isPlant = location.pathname.startsWith("/plant");
   const isWellness = location.pathname.startsWith("/wellness");
+  const isFaith = location.pathname.startsWith("/spiritual");
 
   let tagline = "Healing begins with a single deep breath!"
 
@@ -55,6 +56,11 @@ export default function HomeLayout() {
               {
                 tagline = "The best way out is always through!"
               }
+
+              if(isFaith)
+                {
+                  tagline = "Finding Comfort Through Faith"
+                }
 
             
 

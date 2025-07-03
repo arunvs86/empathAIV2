@@ -48,7 +48,7 @@ export default function Header() {
   const PRIMARY_TABS = [
     { label: "All Posts", to: "/" },
     { label: "Communities", to: "/communities" },
-    { label: "Faith-Based", to: "/faith" },
+    { label: "Spiritual support", to: "/spiritual" },
     { label: "My Journals", to: `/profile/${currentUser.id}/journals` },
   ];
   const MORE_TABS = [
