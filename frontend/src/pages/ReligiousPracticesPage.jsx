@@ -421,14 +421,14 @@ export default function ReligiousPracticesPage() {
       </section>
 
       {/* Resources */}
-      <section className="max-w-4xl mx-auto space-y-4">
+      {/* <section className="max-w-4xl mx-auto space-y-4">
         <h2 className="text-2xl font-calligraphy">Additional Resources</h2>
         <ul className="list-disc list-inside space-y-2">
           <li><a href="/assets/prayers.pdf" className="underline">Download Prayers & Readings (PDF)</a></li>
           <li><button onClick={() => navigate('/contacts/chaplain')} className="underline">Contact a Chaplain</button></li>
           <li><a href="/faith-groups-uk" className="underline">Find Local Faith Groups in the UK</a></li>
         </ul>
-      </section>
+      </section> */}
     </div>
   );
 }
