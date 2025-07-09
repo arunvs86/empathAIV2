@@ -82,12 +82,13 @@ export default function ProfileHeader({
   // If no user prop, fall back to the locally logged-in user
   const stored = localStorage.getItem('user') || '{}';
   const localUser = JSON.parse(stored);
+  console.log("localUser",localUser)
   const user = propUser || localUser;
 
   const {
     username = 'Anonymous',
     profile_picture,
-    bio = 'No bio provided.',
+    bio,
   } = user;
 
   const {

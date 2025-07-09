@@ -124,6 +124,7 @@ export default function MyProfile() {
         );
         const usersArr = await uRes.json();
         const userData = Array.isArray(usersArr) ? usersArr[0] : null;
+        console.log(userData)
         setProfileUser(userData);
 
         // 2) Fetch posts count

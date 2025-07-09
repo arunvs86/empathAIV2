@@ -577,7 +577,9 @@ function TherapistDetail() {
           <div key={date} className="mb-6">
             <div className="bg-gray p-2 rounded-md mb-2">
               <h4 className="bg-gray font-medium">
-                {new Date(date).toLocaleDateString()}
+                {/* {new Date(date).toUTCString()} */}
+                {new Date(date).getDate() + "-" + (new Date(date).getMonth() + 1) +
+                                                 "-" + new Date(date).getFullYear()}
               </h4>
             </div>
             {(slotsMap[date] || []).length > 0 ? (
@@ -597,7 +599,8 @@ function TherapistDetail() {
                         : "bg-emerald-600 hover:bg-emerald-700"
                     }`}
                   >
-                    Book
+                    {status}
+                    {/* Book */}
                   </button>
                 </div>
                 );
