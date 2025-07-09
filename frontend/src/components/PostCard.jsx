@@ -419,7 +419,7 @@ function PostCard({ post, onPostUpdated, onPostDeleted }) {
          onClick={handleToggleComments}
          className="text-white/90 hover:underline text-sm"
        >
-         {showComments ? "Hide Comments" : `${comments.length} Comments`}
+         {showComments ? "Hide Comments" : 'Comments'}
        </button>
        {/* Report + Message grouped on the right */}
        <div className="flex items-center gap-4">

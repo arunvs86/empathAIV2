@@ -68,10 +68,12 @@ export default function HomeLayout() {
 
    // pick background clip based on local time
    const hour    = new Date().getHours(); // 0–23
-   const videoSrc =
-     hour >=  6 && hour < 18
-       ? bgVideoMorning
-       : bgVideoNight;
+  //  const videoSrc =
+  //    hour >=  6 && hour < 18
+  //      ? bgVideoMorning
+  //      : bgVideoNight;
+
+      const videoSrc = bgVideoNight
     
     useEffect(() => {
       const now = new Date();

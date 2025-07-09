@@ -77,6 +77,8 @@ export default function ProfileHeader({
   onEdit,
   isOwnProfile
 }) {
+
+  console.log("propUser",propUser)
   // If no user prop, fall back to the locally logged-in user
   const stored = localStorage.getItem('user') || '{}';
   const localUser = JSON.parse(stored);

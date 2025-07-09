@@ -152,7 +152,7 @@ export default function MyProfile() {
           habits     = await hRes.json();
         }
 
-        console.log("communities",communities)
+        console.log("communities",profileUser)
         // 4) Set stats
         setStats({
           posts:       Array.isArray(posts) ? posts.length : 0,
