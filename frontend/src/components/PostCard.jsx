@@ -246,14 +246,15 @@ function PostCard({ post, onPostUpdated, onPostDeleted }) {
         </div>
         <span
           className={`px-2 py-1 text-s rounded-full font-bold hover:border border-amber-300 ${
-            post.status === "live"
-              ? "bg-white/10"
-              : post.status === "flagged"
-              ? "bg-yellow-200/30"
-              : "bg-red-200/30"
+            // post.status === "live"
+            //   ? "bg-white/10"
+            //   : 
+              post.status === "flagged"
+              ? "bg-red-200/20"
+              : ""
           } text-white/90`}
         >
-          {post.status}
+          {post.status === 'flagged' ? post.status : ""}
         </span>
       </div>
 
