@@ -21,8 +21,10 @@ class UserController {
         where: {
           id: idArray,
         },
-        attributes: ["id", "username"],
+        attributes: ["id", "username","bio"],
       });
+
+      console.log("user",users)
   
       return res.status(200).json(users);
     } catch (error) {
